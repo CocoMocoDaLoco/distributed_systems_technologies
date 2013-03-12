@@ -1,56 +1,57 @@
 package dst.ass1.jpa.dao;
 
+import dst.ass1.jpa.dao.impl.AdminDAO;
+import dst.ass1.jpa.dao.impl.ClusterDAO;
+import dst.ass1.jpa.dao.impl.ComputerDAO;
+import dst.ass1.jpa.dao.impl.EnvironmentDAO;
+import dst.ass1.jpa.dao.impl.ExecutionDAO;
+import dst.ass1.jpa.dao.impl.GridDAO;
+import dst.ass1.jpa.dao.impl.JobDAO;
+import dst.ass1.jpa.dao.impl.MembershipDAO;
+import dst.ass1.jpa.dao.impl.UserDAO;
+
 public class DAOFactory {
 
-	private org.hibernate.Session session;
+    private final org.hibernate.Session session;
 
-	public DAOFactory(org.hibernate.Session session) {
-		this.session = session;
-	}
+    public DAOFactory(org.hibernate.Session session) {
+        this.session = session;
+    }
 
-	public IGridDAO getGridDAO() {
-		// TODO
-		return null;
-	}
+    public IGridDAO getGridDAO() {
+        return new GridDAO(session);
+    }
 
-	public IAdminDAO getAdminDAO() {
-		// TODO
-		return null;
-	}
+    public IAdminDAO getAdminDAO() {
+        return new AdminDAO(session);
+    }
 
-	public IClusterDAO getClusterDAO() {
-		// TODO
-		return null;
-	}
+    public IClusterDAO getClusterDAO() {
+        return new ClusterDAO(session);
+    }
 
-	public IComputerDAO getComputerDAO() {
-		// TODO
-		return null;
-	}
+    public IComputerDAO getComputerDAO() {
+        return new ComputerDAO(session);
+    }
 
-	public IEnvironmentDAO getEnvironmentDAO() {
-		// TODO
-		return null;
-	}
+    public IEnvironmentDAO getEnvironmentDAO() {
+        return new EnvironmentDAO(session);
+    }
 
-	public IExecutionDAO getExecutionDAO() {
-		// TODO
-		return null;
-	}
+    public IExecutionDAO getExecutionDAO() {
+        return new ExecutionDAO(session);
+    }
 
-	public IJobDAO getJobDAO() {
-		// TODO
-		return null;
-	}
+    public IJobDAO getJobDAO() {
+        return new JobDAO(session);
+    }
 
-	public IMembershipDAO getMembershipDAO() {
-		// TODO
-		return null;
-	}
+    public IMembershipDAO getMembershipDAO() {
+        return new MembershipDAO(session);
+    }
 
-	public IUserDAO getUserDAO() {
-		// TODO
-		return null;
-	}
+    public IUserDAO getUserDAO() {
+        return new UserDAO(session);
+    }
 
 }
