@@ -1,11 +1,13 @@
 package dst.ass1.jpa.model.impl;
 
+import java.io.Serializable;
+
 import dst.ass1.jpa.model.IGrid;
 import dst.ass1.jpa.model.IMembershipKey;
 import dst.ass1.jpa.model.IUser;
 
-
-public class MembershipKey implements IMembershipKey {
+public class MembershipKey implements IMembershipKey, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private IUser user;
     private IGrid grid;

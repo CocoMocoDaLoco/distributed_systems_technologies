@@ -3,40 +3,42 @@ package dst.ass1.jpa.model.impl;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
 
+import dst.ass1.jpa.model.IGrid;
 import dst.ass1.jpa.model.IMembership;
 import dst.ass1.jpa.model.IMembershipKey;
+import dst.ass1.jpa.model.IUser;
 
 @Entity
-//@IdClass(value = MembershipKey.class)
+@IdClass(value = MembershipKey.class)
 public class Membership implements IMembership {
 
-    @Id /* TODO: Temp */
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long tempId;
+    @Id
+    @ManyToOne(targetEntity = User.class)
+    private IUser user;
 
-    @Transient
-    private IMembershipKey id;
-
-    //    /* Do we need to duplicate key fields here? */
-    //    private IUser user;
-    //    private IGrid grid;
+    @Id
+    @ManyToOne(targetEntity = Grid.class)
+    private IGrid grid;
 
     private Date registration;
     private Double discount;
 
     @Override
     public IMembershipKey getId() {
-        return id;
+        MembershipKey key = new MembershipKey();
+        key.setGrid(grid);
+        key.setUser(user);
+        return key;
     }
 
     @Override
     public void setId(IMembershipKey id) {
-        this.id = id;
+        user = id.getUser();
+        grid = id.getGrid();
     }
 
     @Override
