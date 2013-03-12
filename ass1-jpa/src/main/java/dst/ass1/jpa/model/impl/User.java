@@ -18,10 +18,10 @@ public class User extends Person implements IUser {
     private String accountNo;
     private String bankCode;
 
-    @OneToMany(targetEntity = Job.class)
+    @OneToMany(targetEntity = Job.class, mappedBy = "user")
     private List<IJob> jobs = new ArrayList<IJob>();
 
-    @OneToMany(targetEntity = Membership.class)
+    @OneToMany(targetEntity = Membership.class, mappedBy = "user")
     private List<IMembership> memberships = new ArrayList<IMembership>();
 
     @Override

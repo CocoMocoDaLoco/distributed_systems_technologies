@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,13 +23,13 @@ public class Job implements IJob {
     private Integer executionTime;
     private boolean isPaid;
 
-    @OneToOne(targetEntity = Environment.class)
+    @OneToOne(targetEntity = Environment.class, cascade = CascadeType.PERSIST)
     private IEnvironment environment;
 
     @ManyToOne(targetEntity = User.class)
     private IUser user;
 
-    @OneToOne(targetEntity = Execution.class)
+    @OneToOne(targetEntity = Execution.class, cascade = CascadeType.PERSIST, mappedBy = "job")
     private IExecution execution;
 
     @Override
