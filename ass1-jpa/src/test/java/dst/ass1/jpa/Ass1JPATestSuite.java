@@ -17,7 +17,8 @@ import dst.ass1.AbstractTestSuite;
 
 		Test_2a01_1.class, Test_2a01_2.class, Test_2a02_1.class,
 		Test_2a02_2.class, Test_2a02_3.class, Test_2a02_4.class,
-		Test_2b01_1.class, Test_2b01_2.class, Test_2d.class,
+		Test_2b01_1.class, Test_2b01_2.class, Test_2c01.class,
+		Test_2c02.class, Test_2d.class,
 
 		Test_3a01.class, Test_3b.class,
 
