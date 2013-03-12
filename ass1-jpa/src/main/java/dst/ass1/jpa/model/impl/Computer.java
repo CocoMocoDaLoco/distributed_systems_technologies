@@ -15,6 +15,8 @@ import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
 
+/* TODO: Move this to an XML mapping. */
+
 @Entity
 public class Computer implements IComputer {
 
