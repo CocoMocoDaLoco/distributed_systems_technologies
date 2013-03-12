@@ -1,9 +1,10 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 import dst.ass1.jpa.model.IJob;
 import dst.ass1.jpa.model.IMembership;
@@ -17,11 +18,11 @@ public class User extends Person implements IUser {
     private String accountNo;
     private String bankCode;
 
-    @ElementCollection(targetClass = Job.class)
-    private List<IJob> jobs;
+    @OneToMany(targetEntity = Job.class)
+    private List<IJob> jobs = new ArrayList<IJob>();
 
-    @ElementCollection(targetClass = Membership.class)
-    private List<IMembership> memberships;
+    @OneToMany(targetEntity = Membership.class)
+    private List<IMembership> memberships = new ArrayList<IMembership>();
 
     @Override
     public String getUsername() {
