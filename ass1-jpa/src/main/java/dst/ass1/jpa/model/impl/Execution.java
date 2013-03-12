@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Execution implements IExecution {
     private JobStatus status;
 
     @ElementCollection(targetClass = Computer.class)
-    private List<IComputer> computers;
+    private List<IComputer> computers = new ArrayList<IComputer>();
 
     @OneToOne(targetEntity = Job.class)
     private IJob job;

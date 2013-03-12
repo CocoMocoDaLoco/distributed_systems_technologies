@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,13 +30,13 @@ public class Cluster implements ICluster {
     private Date nextService;
 
     @ElementCollection(targetClass = Cluster.class)
-    private List<ICluster> composedOf;
+    private List<ICluster> composedOf = new ArrayList<ICluster>();
 
     @ElementCollection(targetClass = Cluster.class)
-    private List<ICluster> partOf;
+    private List<ICluster> partOf = new ArrayList<ICluster>();
 
     @ElementCollection(targetClass = Computer.class)
-    private List<IComputer> computers;
+    private List<IComputer> computers = new ArrayList<IComputer>();
 
     @ManyToOne(targetEntity = Admin.class)
     private IAdmin admin;

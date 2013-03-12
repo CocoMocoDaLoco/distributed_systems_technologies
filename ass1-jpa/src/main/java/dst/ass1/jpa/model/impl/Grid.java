@@ -1,6 +1,7 @@
 package dst.ass1.jpa.model.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -27,10 +28,10 @@ public class Grid implements IGrid {
     private BigDecimal costsPerCPUMinute;
 
     @ElementCollection(targetClass = Membership.class)
-    private List<IMembership> memberships;
+    private List<IMembership> memberships = new ArrayList<IMembership>();
 
     @ElementCollection(targetClass = Cluster.class)
-    private List<ICluster> clusters;
+    private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override
     public Long getId() {

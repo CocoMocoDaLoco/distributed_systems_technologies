@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class Computer implements IComputer {
     private ICluster cluster;
 
     @ElementCollection(targetClass = Execution.class)
-    private List<IExecution> executions;
+    private List<IExecution> executions = new ArrayList<IExecution>();
 
     @Override
     public Long getId() {

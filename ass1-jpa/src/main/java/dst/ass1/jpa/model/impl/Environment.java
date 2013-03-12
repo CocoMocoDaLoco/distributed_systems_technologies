@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -21,7 +22,7 @@ public class Environment implements IEnvironment {
 
     @ElementCollection
     @OrderColumn
-    private List<String> params;
+    private List<String> params = new ArrayList<String>();
 
     @Override
     public Long getId() {

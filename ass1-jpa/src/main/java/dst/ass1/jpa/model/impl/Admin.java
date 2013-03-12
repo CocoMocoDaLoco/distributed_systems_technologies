@@ -1,5 +1,6 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -12,7 +13,7 @@ import dst.ass1.jpa.model.ICluster;
 public class Admin extends Person implements IAdmin {
 
     @ElementCollection(targetClass = Cluster.class)
-    private List<ICluster> clusters;
+    private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override
     public List<ICluster> getClusters() {
