@@ -4,22 +4,13 @@ import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.IJob;
 import dst.ass1.jpa.model.IMembership;
 import dst.ass1.jpa.model.IUser;
 
 @Entity
-public class User implements IUser {
-
-    @Id /* TODO: Temp! */
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
-    private long id;
+public class User extends Person implements IUser {
 
     private String username;
     private byte[] password;

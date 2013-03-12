@@ -1,17 +1,20 @@
 package dst.ass1.jpa.model.impl;
 
 import javax.persistence.Embedded;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.IAddress;
 import dst.ass1.jpa.model.IPerson;
 
-@Entity
-public class Person implements IPerson {
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Person implements IPerson {
 
     @Id
     @GeneratedValue(generator = "increment")
