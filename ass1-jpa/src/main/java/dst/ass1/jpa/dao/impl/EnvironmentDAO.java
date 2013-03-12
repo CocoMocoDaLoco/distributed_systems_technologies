@@ -4,6 +4,7 @@ import org.hibernate.Session;
 
 import dst.ass1.jpa.dao.IEnvironmentDAO;
 import dst.ass1.jpa.model.IEnvironment;
+import dst.ass1.jpa.model.impl.Environment;
 
 public class EnvironmentDAO extends GenericJpaDAO<IEnvironment> implements IEnvironmentDAO {
 
@@ -13,7 +14,7 @@ public class EnvironmentDAO extends GenericJpaDAO<IEnvironment> implements IEnvi
 
     @Override
     protected String getTableName() {
-        return "Environment";
+        return Environment.class.getSimpleName();
     }
 
 }

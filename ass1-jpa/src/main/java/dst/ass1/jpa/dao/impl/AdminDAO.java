@@ -1,28 +1,20 @@
 package dst.ass1.jpa.dao.impl;
 
-import java.util.List;
-
 import org.hibernate.Session;
 
 import dst.ass1.jpa.dao.IAdminDAO;
 import dst.ass1.jpa.model.IAdmin;
+import dst.ass1.jpa.model.impl.Admin;
 
-public class AdminDAO implements IAdminDAO {
+public class AdminDAO extends GenericJpaDAO<IAdmin> implements IAdminDAO {
 
     public AdminDAO(Session session) {
-        // TODO Auto-generated constructor stub
+        super(session);
     }
 
     @Override
-    public IAdmin findById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<IAdmin> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+    protected String getTableName() {
+        return Admin.class.getSimpleName();
     }
 
 }

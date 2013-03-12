@@ -7,23 +7,12 @@ import org.hibernate.Session;
 
 import dst.ass1.jpa.dao.IJobDAO;
 import dst.ass1.jpa.model.IJob;
+import dst.ass1.jpa.model.impl.Job;
 
-public class JobDAO implements IJobDAO {
+public class JobDAO extends GenericJpaDAO<IJob> implements IJobDAO {
 
     public JobDAO(Session session) {
-        // TODO Auto-generated constructor stub
-    }
-
-    @Override
-    public IJob findById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<IJob> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+        super(session);
     }
 
     @Override
@@ -36,6 +25,11 @@ public class JobDAO implements IJobDAO {
     public List<IJob> findJobForStatusFinishedStartandFinish(Date start, Date finish) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    protected String getTableName() {
+        return Job.class.getSimpleName();
     }
 
 }
