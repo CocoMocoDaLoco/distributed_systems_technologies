@@ -41,7 +41,9 @@ public class Test_1b02 extends AbstractTest {
 			}
 
 		} finally {
-			tx.rollback();
+			if (tx.isActive()) {
+				tx.rollback();
+			}
 		}
 
 		assertTrue(isConstraint);
@@ -72,7 +74,9 @@ public class Test_1b02 extends AbstractTest {
 			}
 
 		} finally {
-			tx.rollback();
+			if (tx.isActive()) {
+				tx.rollback();
+			}
 		}
 
 		assertTrue(isConstraint);

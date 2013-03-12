@@ -42,7 +42,9 @@ public class Test_1a04 extends AbstractTest {
 			}
 
 		} finally {
-			tx.rollback();
+			if (tx.isActive()) {
+				tx.rollback();
+			}
 		}
 
 		assertTrue(isConstraint);
