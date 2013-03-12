@@ -9,20 +9,36 @@ import dst.ass1.jpa.model.IEnvironment;
 
 public class EnvironmentDAO implements IEnvironmentDAO {
 
+    private final Session session;
+
     public EnvironmentDAO(Session session) {
-        // TODO Auto-generated constructor stub
+        this.session = session;
     }
 
     @Override
     public IEnvironment findById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        List<IEnvironment> l = null;
+
+        session.beginTransaction();
+        l = session.createQuery("from Environment where id = :id").setParameter("id", id).list();
+        session.getTransaction().commit();
+
+        if (l.isEmpty()) {
+            return null;
+        }
+
+        return l.get(0);
     }
 
     @Override
     public List<IEnvironment> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+        List<IEnvironment> l = null;
+
+        session.beginTransaction();
+        l = session.createQuery("from Environment").list();
+        session.getTransaction().commit();
+
+        return l;
     }
 
 }
