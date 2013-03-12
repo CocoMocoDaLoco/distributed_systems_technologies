@@ -1,4 +1,5 @@
 \documentclass[a4paper,10pt]{article}
+\usepackage{comment}
 \usepackage[utf8]{inputenc}
 
 \title{VU Distributed Systems Technologies \\
@@ -13,6 +14,16 @@
 \section{Notes}
 
 \subsection{Choice of inheritance pattern}
+
+\begin{comment}
+InheritanceType: JOINED; Common table for base type, additional infos stored 
+separately. SINGLE_TABLE sounds nice for our needs, but support is optional.
+
+MappedSuperclass: the superclass contains persisted information, but is not
+mapped as an entity by the JPA provider. State & mapping information common to
+multiple entity classes. Non-entity superclasses don't support persistence,
+and abstract entities are mapped (which we don't need).
+\end{comment}
 
 
 
