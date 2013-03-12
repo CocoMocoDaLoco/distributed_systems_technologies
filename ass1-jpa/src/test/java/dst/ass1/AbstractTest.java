@@ -23,13 +23,16 @@ public abstract class AbstractTest {
 		em = emf.createEntityManager();
 		jdbcConnection = new JdbcConnection();
 		modelFactory = new ModelFactory();
-		
+
 		setUpDatabase();
 	}
 
 	@After
 	public void clean() throws Exception {
 		em.close();
+		if (em.getTransaction().isActive()) {
+			em.getTransaction().rollback();
+		}
 		JdbcHelper.cleanTables(jdbcConnection);
 		jdbcConnection.disconnect();
 	}
