@@ -76,7 +76,7 @@ public class User extends Person implements IUser {
 
     @Override
     public void addJob(IJob job) {
-        this.jobs.add(job);
+        jobs.add(job);
     }
 
     @Override
