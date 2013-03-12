@@ -90,6 +90,7 @@ public class Test_2a02_2 extends AbstractTest {
 			assertEquals(testData.user2Id, ((IPerson) result.get(1)).getId());
 
 		} catch (Exception e) {
+			tx.rollback();
 			fail(e.getMessage());
 		}
 
