@@ -2,63 +2,64 @@ package dst.ass1.jpa.model;
 
 import java.io.Serializable;
 
+import dst.ass1.jpa.model.impl.Address;
+import dst.ass1.jpa.model.impl.Admin;
+import dst.ass1.jpa.model.impl.Cluster;
+import dst.ass1.jpa.model.impl.Computer;
+import dst.ass1.jpa.model.impl.Environment;
+import dst.ass1.jpa.model.impl.Execution;
+import dst.ass1.jpa.model.impl.Grid;
+import dst.ass1.jpa.model.impl.Job;
+import dst.ass1.jpa.model.impl.Membership;
+import dst.ass1.jpa.model.impl.MembershipKey;
+import dst.ass1.jpa.model.impl.User;
+
 public class ModelFactory implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public IAddress createAddress() {
-		// TODO
-		return null;
-	}
+    public IAddress createAddress() {
+        return new Address();
+    }
 
-	public IAdmin createAdmin() {
-		// TODO
-		return null;
-	}
+    public IAdmin createAdmin() {
+        return new Admin();
+    }
 
-	public ICluster createCluster() {
-		// TODO
-		return null;
-	}
+    public ICluster createCluster() {
+        return new Cluster();
+    }
 
-	public IComputer createComputer() {
-		// TODO
-		return null;
-	}
+    public IComputer createComputer() {
+        return new Computer();
+    }
 
-	public IEnvironment createEnvironment() {
-		// TODO
-		return null;
-	}
+    public IEnvironment createEnvironment() {
+        return new Environment();
+    }
 
-	public IExecution createExecution() {
-		// TODO
-		return null;
-	}
+    public IExecution createExecution() {
+        return new Execution();
+    }
 
-	public IGrid createGrid() {
-		// TODO
-		return null;
-	}
+    public IGrid createGrid() {
+        return new Grid();
+    }
 
-	public IJob createJob() {
-		// TODO
-		return null;
-	}
+    public IJob createJob() {
+        return new Job();
+    }
 
-	public IMembership createMembership() {
-		// TODO
-		return null;
-	}
+    public IMembership createMembership() {
+        return new Membership();
+    }
 
-	public IMembershipKey createMembershipKey() {
-		// TODO
-		return null;
-	}
+    public IMembershipKey createMembershipKey() {
+        return new MembershipKey();
+    }
 
-	public IUser createUser() {
-		// TODO
-		return null;
-	}
+    public IUser createUser() {
+        return new User();
+    }
 
 }
