@@ -6,10 +6,9 @@ import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
@@ -20,8 +19,7 @@ import dst.ass1.jpa.model.JobStatus;
 public class Execution implements IExecution {
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date start;
     private Date end;

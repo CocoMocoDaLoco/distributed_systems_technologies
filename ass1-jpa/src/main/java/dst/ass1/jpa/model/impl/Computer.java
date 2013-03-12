@@ -6,10 +6,9 @@ import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
@@ -19,8 +18,7 @@ import dst.ass1.jpa.model.IExecution;
 public class Computer implements IComputer {
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private Integer cpus;

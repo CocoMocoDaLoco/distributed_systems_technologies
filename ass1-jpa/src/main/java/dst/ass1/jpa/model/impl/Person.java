@@ -2,12 +2,11 @@ package dst.ass1.jpa.model.impl;
 
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.IAddress;
 import dst.ass1.jpa.model.IPerson;
@@ -17,8 +16,7 @@ import dst.ass1.jpa.model.IPerson;
 public abstract class Person implements IPerson {
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String lastName;
     private String firstName;

@@ -4,10 +4,9 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import dst.ass1.jpa.model.IMembership;
 import dst.ass1.jpa.model.IMembershipKey;
@@ -17,8 +16,7 @@ import dst.ass1.jpa.model.IMembershipKey;
 public class Membership implements IMembership {
 
     @Id /* TODO: Temp */
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long tempId;
 
     @Transient
