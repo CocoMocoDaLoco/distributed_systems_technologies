@@ -3,6 +3,7 @@ package dst.ass1.jpa.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
@@ -14,6 +15,8 @@ import dst.ass1.jpa.model.IUser;
 public class User extends Person implements IUser {
 
     private String username;
+
+    @Column(columnDefinition = "binary(16)")
     private byte[] password;
     private String accountNo;
     private String bankCode;
