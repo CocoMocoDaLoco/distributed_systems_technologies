@@ -6,14 +6,18 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import dst.ass1.jpa.model.IJob;
 import dst.ass1.jpa.model.IMembership;
 import dst.ass1.jpa.model.IUser;
 
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "accountNo", "bankCode" }) })
 public class User extends Person implements IUser {
 
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(columnDefinition = "binary(16)")
