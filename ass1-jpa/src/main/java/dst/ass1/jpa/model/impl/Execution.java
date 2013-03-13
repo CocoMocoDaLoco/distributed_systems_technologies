@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import dst.ass1.jpa.model.IComputer;
@@ -26,7 +26,7 @@ public class Execution implements IExecution {
     private Date end;
     private JobStatus status;
 
-    @ElementCollection(targetClass = Computer.class)
+    @ManyToMany(targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     @OneToOne(targetEntity = Job.class)

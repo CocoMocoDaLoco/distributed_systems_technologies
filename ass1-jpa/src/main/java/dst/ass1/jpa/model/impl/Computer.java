@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import dst.ass1.jpa.model.ICluster;
@@ -35,7 +35,7 @@ public class Computer implements IComputer {
     @ManyToOne(targetEntity = Cluster.class)
     private ICluster cluster;
 
-    @ElementCollection(targetClass = Execution.class)
+    @ManyToMany(targetEntity = Execution.class)
     private List<IExecution> executions = new ArrayList<IExecution>();
 
     @Override

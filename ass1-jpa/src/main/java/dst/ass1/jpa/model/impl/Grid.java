@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IGrid;
@@ -27,10 +28,10 @@ public class Grid implements IGrid {
     private String name;
     private BigDecimal costsPerCPUMinute;
 
-    @ElementCollection(targetClass = Membership.class)
+    @ManyToMany(targetEntity = Membership.class)
     private List<IMembership> memberships = new ArrayList<IMembership>();
 
-    @ElementCollection(targetClass = Cluster.class)
+    @OneToMany(targetEntity = Cluster.class)
     private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override
