@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import dst.ass1.jpa.model.IAdmin;
 import dst.ass1.jpa.model.ICluster;
@@ -29,13 +31,13 @@ public class Cluster implements ICluster {
     private Date lastService;
     private Date nextService;
 
-    @ElementCollection(targetClass = Cluster.class)
+    @ManyToMany(cascade = CascadeType.PERSIST, targetEntity = Cluster.class, mappedBy = "partOf")
     private List<ICluster> composedOf = new ArrayList<ICluster>();
 
-    @ElementCollection(targetClass = Cluster.class)
+    @ManyToMany(targetEntity = Cluster.class)
     private List<ICluster> partOf = new ArrayList<ICluster>();
 
-    @ElementCollection(targetClass = Computer.class)
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     @ManyToOne(targetEntity = Admin.class)
