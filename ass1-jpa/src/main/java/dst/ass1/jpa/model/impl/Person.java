@@ -22,7 +22,7 @@ public abstract class Person implements IPerson {
     private String firstName;
 
     @Embedded
-    private IAddress address;
+    private Address address;
 
     @Override
     public Long getId() {
@@ -61,7 +61,10 @@ public abstract class Person implements IPerson {
 
     @Override
     public void setAddress(IAddress address) {
-        this.address = address;
+        this.address = new Address();
+        this.address.setCity(address.getCity());
+        this.address.setStreet(address.getStreet());
+        this.address.setZipCode(address.getZipCode());
     }
 
 }
