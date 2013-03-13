@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,6 +26,8 @@ public class Execution implements IExecution {
     private Long id;
     private Date start;
     private Date end;
+
+    @Enumerated(value = EnumType.STRING)
     private JobStatus status;
 
     @ManyToMany(targetEntity = Computer.class)
