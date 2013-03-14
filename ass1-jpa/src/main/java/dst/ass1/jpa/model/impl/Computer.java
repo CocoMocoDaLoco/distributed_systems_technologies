@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
+import dst.ass1.jpa.validator.CPUs;
 
 @NamedQuery(name = "findComputersInVienna",
             query = "select c, e.start, e.end " +
@@ -24,6 +25,8 @@ public class Computer implements IComputer {
 
     @Size(min = 5, max = 25)
     private String name;
+
+    @CPUs(min = 4, max = 8)
     private Integer cpus;
 
     @Pattern(regexp = "[A-Z]{3}-[A-Z]{3}@[0-9]{4,}")
