@@ -14,6 +14,7 @@ public abstract class GenericJpaDAO<T> implements GenericDAO<T> {
         this.session = session;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T findById(Long id) {
         String query = String.format("from %s where %s = :id",
@@ -29,6 +30,7 @@ public abstract class GenericJpaDAO<T> implements GenericDAO<T> {
         return l.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> findAll() {
         String query = String.format("from %s", getTableName());

@@ -17,6 +17,7 @@ public class ComputerDAO extends GenericJpaDAO<IComputer> implements IComputerDA
         super(session);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public HashMap<IComputer, Integer> findComputersInViennaUsage() {
         Query query = getSession().getNamedQuery("findComputersInVienna");
