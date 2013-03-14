@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
@@ -19,10 +22,17 @@ public class Computer implements IComputer {
 
     private Long id;
 
+    @Size(min = 5, max = 25)
     private String name;
     private Integer cpus;
+
+    @Pattern(regexp = "[A-Z]{3}-[A-Z]{3}@[0-9]{4,}")
     private String location;
+
+    @Past
     private Date creation;
+
+    @Past
     private Date lastUpdate;
     private ICluster cluster;
     private List<IExecution> executions = new ArrayList<IExecution>();
