@@ -1,7 +1,10 @@
 package dst.ass1.jpa.dao.impl;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import dst.ass1.jpa.dao.IComputerDAO;
@@ -16,8 +19,31 @@ public class ComputerDAO extends GenericJpaDAO<IComputer> implements IComputerDA
 
     @Override
     public HashMap<IComputer, Integer> findComputersInViennaUsage() {
-        // TODO Auto-generated method stub
-        return null;
+        Query query = getSession().getNamedQuery("findComputersInVienna");
+        List results = query.list();
+
+        HashMap<IComputer, Integer> h = new HashMap<IComputer, Integer>();
+
+        for (Object o : results) {
+            Object oo[] = (Object[])o;
+            Computer computer = (Computer)oo[0];
+            Date start = (Date)oo[1];
+            Date end = (Date)oo[2];
+
+            int elapsedTime = 0;
+
+            if (start != null && end != null) {
+                elapsedTime = (int)(end.getTime() - start.getTime());
+            }
+
+            if (h.containsKey(computer)) {
+                elapsedTime += h.get(computer);
+            }
+
+            h.put(computer, elapsedTime);
+        }
+
+        return h;
     }
 
     @Override

@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
@@ -24,7 +26,11 @@ public class Execution implements IExecution {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date start;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date end;
 
     @Enumerated(value = EnumType.STRING)

@@ -4,10 +4,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.NamedQuery;
+
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
 
+@NamedQuery(name = "findComputersInVienna",
+            query = "select c, e.start, e.end " +
+                    "from Computer c " +
+                    "   join c.executions e " +
+                    "where c.location like 'AUT-VIE%'")
 public class Computer implements IComputer {
 
     private Long id;

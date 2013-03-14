@@ -41,4 +41,8 @@ public abstract class GenericJpaDAO<T> implements GenericDAO<T> {
         return "id";
     }
 
+    protected Session getSession() {
+        return session;
+    }
+
 }
