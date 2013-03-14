@@ -4,38 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-
 import dst.ass1.jpa.model.ICluster;
 import dst.ass1.jpa.model.IComputer;
 import dst.ass1.jpa.model.IExecution;
 
-/* TODO: Move this to an XML mapping. */
-
-@Entity
 public class Computer implements IComputer {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true)
     private String name;
     private Integer cpus;
     private String location;
     private Date creation;
     private Date lastUpdate;
-
-    @ManyToOne(targetEntity = Cluster.class)
     private ICluster cluster;
-
-    @ManyToMany(targetEntity = Execution.class)
     private List<IExecution> executions = new ArrayList<IExecution>();
 
     @Override
