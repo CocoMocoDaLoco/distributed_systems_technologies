@@ -25,6 +25,14 @@ multiple entity classes. Non-entity superclasses don't support persistence,
 and abstract entities are mapped (which we don't need).
 \end{comment}
 
+\subsection{Date aggregation in JPQL}
+
+\begin{comment}
+JPQL does not support date aggregation in any reasonable form, which means we
+can't do summation within the query. Extract all rows individually, then
+create the sum within java code.
+\end{comment}
+
 
 
 \end{document}
