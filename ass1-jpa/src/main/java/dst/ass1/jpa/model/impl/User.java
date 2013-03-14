@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -15,6 +17,27 @@ import dst.ass1.jpa.model.IUser;
 
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "accountNo", "bankCode" }) })
+@NamedQueries({
+@NamedQuery(name = "findUsersWithActiveMembership",
+            query = "select u " +
+                    "from User u " +
+                    "   join u.memberships m " +
+                    "   join u.jobs j " +
+                    "   join j.execution.computers c " +
+                    "where m.grid.name = :name " +
+                    "   and c.cluster.grid = m.grid " +
+                    "group by u " +
+                    "having count(j) >= :minNr"),
+@NamedQuery(name = "findMostActiveUser",
+            query = "select u " +
+                    "from User u " +
+                    "   join u.jobs j " +
+                    "group by u " +
+                    "having count(j) >= all ( " +
+                    "   select count(j) " +
+                    "   from User u " +
+                    "      join u.jobs j " +
+                    "   group by u)")})
 public class User extends Person implements IUser {
 
     @Column(unique = true, nullable = false)
