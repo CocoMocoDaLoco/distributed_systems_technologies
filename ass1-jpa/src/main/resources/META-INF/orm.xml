@@ -4,8 +4,19 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm    
     http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
     version="2.0">
-    <description>ass1-jpa</description>
-    <package>entity</package> 
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <entity-listeners>
+                <entity-listener class="dst.ass1.jpa.listener.DefaultListener">
+                    <pre-persist method-name="onPrePersist"/>
+                    <post-persist method-name="onPostPersist"/>
+                    <post-remove method-name="onPostRemove"/>
+                    <post-update method-name="onPostUpdate"/>
+                    <post-load method-name="onPostLoad"/>
+                </entity-listener>
+            </entity-listeners>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
     <entity class="dst.ass1.jpa.model.impl.Computer" name="Computer">        
         <table name="Computer"/>
         <attributes>

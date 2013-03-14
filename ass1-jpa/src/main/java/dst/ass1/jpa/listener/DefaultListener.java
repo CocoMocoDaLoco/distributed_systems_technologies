@@ -1,40 +1,95 @@
 package dst.ass1.jpa.listener;
 
+import java.util.Date;
+
+
 public class DefaultListener {
-	
-	// TODO
 
-	public static int getLoadOperations() {
-		// TODO
-		return -1;
-	}
+    private static int activePersistCount;
+    private static Date persistStart;
+    private static long totalPersistTime;
 
-	public static int getUpdateOperations() {
-		// TODO
-		return -1;
-	}
+    private static final Object gate = new Object();
 
-	public static int getRemoveOperations() {
-		// TODO
-		return -1;
-	}
+    private static int totalPersistCount;
+    private static int totalLoadCount;
+    private static int totalUpdateCount;
+    private static int totalRemoveCount;
 
-	public static int getPersistOperations() {
-		// TODO
-		return -1;
-	}
+    public void onPrePersist(Object object) {
+        synchronized (gate) {
+            activePersistCount++;
+            if (activePersistCount == 1) {
+                persistStart = new Date();
+            }
+        }
+    }
 
-	public static long getOverallTimeToPersist() {
-		// TODO
-		return -1;
-	}
+    public void onPostPersist(Object object) {
+        synchronized (gate) {
+            totalPersistCount++;
 
-	public static double getAverageTimeToPersist() {
-		// TODO
-		return -1;
-	}
+            activePersistCount--;
+            if (activePersistCount == 0) {
+                long seconds = new Date().getTime() - persistStart.getTime();
+                totalPersistTime += seconds;
+            }
+        }
+    }
 
-	public static void clear() {
-		// TODO
+    public void onPostUpdate(Object object) {
+        synchronized (gate) {
+            totalUpdateCount++;
+        }
+    }
+
+    public void onPostLoad(Object object) {
+        synchronized (gate) {
+            totalLoadCount++;
+        }
+    }
+
+    public void onPostRemove(Object object) {
+        synchronized (gate) {
+            totalRemoveCount++;
+        }
+    }
+
+    public static int getLoadOperations() {
+        return totalLoadCount;
+    }
+
+    public static int getUpdateOperations() {
+        return totalUpdateCount;
+    }
+
+    public static int getRemoveOperations() {
+        return totalRemoveCount;
+    }
+
+    public static int getPersistOperations() {
+        return totalPersistCount;
+    }
+
+    public static long getOverallTimeToPersist() {
+        return totalPersistTime;
+    }
+
+    public static double getAverageTimeToPersist() {
+        synchronized (gate) {
+            return (double)totalPersistTime / totalPersistCount;
+        }
+    }
+
+	public  static void clear() {
+        synchronized (gate) {
+            activePersistCount = 0;
+            totalPersistTime = 0;
+            persistStart = null;
+            totalPersistCount = 0;
+            totalLoadCount = 0;
+            totalUpdateCount = 0;
+            totalRemoveCount = 0;
+        }
 	}
 }
