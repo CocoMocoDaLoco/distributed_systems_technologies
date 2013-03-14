@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Index;
+
 import dst.ass1.jpa.model.IJob;
 import dst.ass1.jpa.model.IMembership;
 import dst.ass1.jpa.model.IUser;
@@ -44,6 +46,7 @@ public class User extends Person implements IUser {
     private String username;
 
     @Column(columnDefinition = "binary(16)")
+    @Index(name = "password_ix")
     private byte[] password;
     private String accountNo;
     private String bankCode;
