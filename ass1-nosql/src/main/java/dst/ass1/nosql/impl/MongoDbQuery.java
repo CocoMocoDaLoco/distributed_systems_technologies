@@ -8,6 +8,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MapReduceCommand;
+import com.mongodb.MapReduceOutput;
 
 import dst.ass1.nosql.IMongoDbQuery;
 
@@ -62,8 +64,37 @@ public class MongoDbQuery implements IMongoDbQuery {
 
     @Override
     public List<DBObject> mapReduceWorkflow() {
-        // TODO Auto-generated method stub
-        return null;
+        String m =
+                "function() { " +
+                "    for (var prop in this) { " +
+                "        switch (prop) { " +
+                "        case \"_id\": " +
+                "        case \"job_id\": " +
+                "        case \"last_updated\": " +
+                "            continue; " +
+                "        default: "  +
+                "            emit (prop, 1); " +
+                "        } " +
+                "    }" +
+                "}";
+        String r = "function(key, values) { " +
+                "    var sum = 0; " +
+                "    for (var v in values) { " +
+                "        sum += v; " +
+                "    } " +
+                "    return sum; " +
+                "}";
+
+        MapReduceOutput out = collection.mapReduce(m, r, null,
+                MapReduceCommand.OutputType.INLINE, null);
+
+        List<DBObject> l = new ArrayList<DBObject>();
+        for (DBObject object : out.results()) {
+            l.add(object);
+            System.out.printf("mapReduceWorkflow: %s%n", object);
+        }
+
+        return l;
     }
 
 }
