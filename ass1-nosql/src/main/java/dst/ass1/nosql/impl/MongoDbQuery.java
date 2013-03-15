@@ -1,5 +1,6 @@
 package dst.ass1.nosql.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mongodb.BasicDBObject;
@@ -40,8 +41,23 @@ public class MongoDbQuery implements IMongoDbQuery {
 
     @Override
     public List<Long> findLastUpdatedGt(Long time) {
-        // TODO Auto-generated method stub
-        return null;
+        BasicDBObject query = new BasicDBObject("last_updated",
+                new BasicDBObject("$gt", time));
+        BasicDBObject filter = new BasicDBObject("job_id", 1);
+
+        DBCursor cursor = collection.find(query, filter);
+
+        List<Long> l = new ArrayList<Long>();
+
+        while (cursor.hasNext()) {
+            DBObject object = cursor.next();
+            Integer jobId = (Integer)object.get("job_id");
+            l.add(new Long(jobId.longValue()));
+
+            System.out.printf("findLastUpdatedGt: Found %s%n", object);
+        }
+
+        return l;
     }
 
     @Override
