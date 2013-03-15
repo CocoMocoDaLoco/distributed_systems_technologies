@@ -1,25 +1,37 @@
 package dst.ass1.jpa.interceptor;
 
+import java.util.regex.Pattern;
+
 import org.hibernate.EmptyInterceptor;
 
 public class SQLInterceptor extends EmptyInterceptor {
 
-	private static final long serialVersionUID = 3894614218727237142L;
+    private static final long serialVersionUID = 3894614218727237142L;
 
-	public String onPrepareStatement(String sql) {
-		
-		// TODO
-		
-		return sql;
-	}
+    private static int selectCount;
+    private static final Object gate = new Object();
 
-	public static void resetCounter() {
-		// TODO
-	}
+    @Override
+    public String onPrepareStatement(String sql) {
+        if (Pattern.matches("select [ a-zA-Z0-9._,]+ from .*(Computer|Execution).*", sql)) {
+            synchronized (gate) {
+                selectCount++;
+            }
+        }
 
-	
-	public static int getSelectCount() {
-		// TODO
-		return -1;
-	}
+        return sql;
+    }
+
+    public static void resetCounter() {
+        synchronized (gate) {
+            selectCount = 0;
+        }
+    }
+
+
+    public static int getSelectCount() {
+        synchronized (gate) {
+            return selectCount;
+        }
+    }
 }
