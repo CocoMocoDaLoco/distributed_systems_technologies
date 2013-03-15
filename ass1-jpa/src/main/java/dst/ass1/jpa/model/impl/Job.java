@@ -29,7 +29,7 @@ public class Job implements IJob {
     @ManyToOne(targetEntity = User.class)
     private IUser user;
 
-    @OneToOne(targetEntity = Execution.class, cascade = CascadeType.PERSIST)
+    @OneToOne(targetEntity = Execution.class, cascade = CascadeType.PERSIST, optional = false)
     private IExecution execution;
 
     @Override
