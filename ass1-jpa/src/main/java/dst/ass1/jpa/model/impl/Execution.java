@@ -39,6 +39,7 @@ public class Execution implements IExecution {
     @ManyToMany(targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
+    /* TODO: Why does inserting optional = false break multiple test cases? */
     @OneToOne(targetEntity = Job.class)
     private IJob job;
 

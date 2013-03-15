@@ -17,11 +17,11 @@ import dst.ass1.jpa.model.IUser;
 public class Membership implements IMembership {
 
     @Id
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(targetEntity = User.class, optional = false)
     private IUser user;
 
     @Id
-    @ManyToOne(targetEntity = Grid.class)
+    @ManyToOne(targetEntity = Grid.class, optional = false)
     private IGrid grid;
 
     private Date registration;

@@ -40,10 +40,10 @@ public class Cluster implements ICluster {
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
-    @ManyToOne(targetEntity = Admin.class)
+    @ManyToOne(targetEntity = Admin.class, optional = false)
     private IAdmin admin;
 
-    @ManyToOne(targetEntity = Grid.class)
+    @ManyToOne(targetEntity = Grid.class, optional = false)
     private IGrid grid;
 
     @Override

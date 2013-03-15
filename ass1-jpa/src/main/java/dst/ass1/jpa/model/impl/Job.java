@@ -23,7 +23,7 @@ public class Job implements IJob {
     private Integer executionTime;
     private boolean isPaid;
 
-    @OneToOne(targetEntity = Environment.class, cascade = CascadeType.PERSIST)
+    @OneToOne(targetEntity = Environment.class, cascade = CascadeType.PERSIST, optional = false)
     private IEnvironment environment;
 
     @ManyToOne(targetEntity = User.class)

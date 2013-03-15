@@ -38,7 +38,7 @@
             <basic name="lastUpdate">
                 <column name="lastUpdate"/>
             </basic>
-            <many-to-one name="cluster" target-entity="dst.ass1.jpa.model.impl.Cluster"/>
+            <many-to-one name="cluster" target-entity="dst.ass1.jpa.model.impl.Cluster" optional="false"/>
             <many-to-many name="executions" target-entity="dst.ass1.jpa.model.impl.Execution"/>
         </attributes>
     </entity>
