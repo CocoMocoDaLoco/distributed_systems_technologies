@@ -43,7 +43,6 @@ public class MongoDbDataLoader implements IMongoDbDataLoader {
 
         collection.createIndex(new BasicDBObject("job_id", 1));
 
-        int i = 0;
         for (IJob job : jobs) {
             String jsonString = String.format(
                     "{ " +
