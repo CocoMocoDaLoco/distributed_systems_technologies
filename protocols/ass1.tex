@@ -34,30 +34,39 @@
 
 \subsection{Choice of inheritance pattern}
 
-\begin{comment}
-InheritanceType: JOINED; Common table for base type, additional infos stored 
-separately. SINGLE_TABLE sounds nice for our needs, but support is optional.
+\begin{itemize}
+\item \lstinline|InheritanceType.JOINED|; Common table for base type, additional infos stored 
+      separately. 
+\item \lstinline|InheritanceType.SINGLE_TABLE|: all subclasses are mapped into a single table, with a
+      separate column distinguishing between them. Fields of subclasses must be nullable.
+\item \lstinline|InheritanceType.TABLE_PER_CLASS|; completely separate tables for each subclass. Support
+      is optional.
+\end{itemize}
 
-MappedSuperclass: the superclass contains persisted information, but is not
-mapped as an entity by the JPA provider. State & mapping information common to
-multiple entity classes. Non-entity superclasses don't support persistence,
-and abstract entities are mapped (which we don't need).
-\end{comment}
+\lstinline|@MappedSuperclass|: the superclass contains persisted information, but is not
+mapped as an entity by the JPA provider. State \& mapping information common to
+multiple entity classes. Non-entity superclasses don't have their own tables and can't be targets of
+associations.
+
+Since several subclass fields were specified to be \lstinline|NOT NULL|, using the single
+table inheritance type was out of the question. Table per class would have fit nicely
+with our needs (we don't have any queries that need to address both users and admins),
+but support for it is optional. This leaves only \lstinline|JOINED|, which we chose in combination with
+\lstinline|@MappedSuperclass| for a similar effect to table per class: here is no \lstinline|Person| table,
+and superclass details are contained in both subclass tables.
 
 \subsection{Date aggregation in JPQL}
 
-\begin{comment}
 JPQL does not support date aggregation in any reasonable form, which means we
-can't do summation within the query. Extract all rows individually, then
-create the sum within java code.
-\end{comment}
+can't do summation within the query. Therefore, we extract all required rows individually
+(in a single query), then create the sum within java code.
 
 \subsection{Indices, pros and cons}
 
-\begin{comment}
-When is the User.password index helpful, when could it be harmful. Optional:
-large-scale tests.
-\end{comment}
+The index on \lstinline|User.password| will speed up queries in most cases if the table is
+large and such queries are performed often enough.
+However, it can also be a disadvantage if every user (or many users) happen to choose the same password,
+in which case the index will consume additional space for no achieved speed-up.
 
 \section{Theory}
 
