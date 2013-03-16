@@ -40,6 +40,42 @@ When is the User.password index helpful, when could it be harmful. Optional:
 large-scale tests.
 \end{comment}
 
+\section{Theory}
 
+\subsection{Annotations vs. XML (1 Point)}
+
+\emph{In the previous tasks you already gained some experiences using annotations and XML. What are the
+pros and cons of each approach, when would you use which one? Answering these questions, also keep
+in mind maintainability and the different roles usually involved in software projects.}
+
+\subsection{6. Versioning (1 Point)}
+
+\emph{JPA provides a feature called versioning. Why and under which circumstances can this feature be useful?
+Think about a situation where optimistic locking may result in an (desired) exception.}
+
+\subsection{7. Read-Locks (2 Point)}
+
+\emph{The EntityManager allows the programmer to set Read-locks on specified objects. What are the conse-
+quences on concurrent threads when one thread sets such a lock? Think about use-cases this behaviour
+may be adequate for. What problems can arise?}
+
+\subsection{8. Database Isolation-Levels (2 Points)}
+
+\emph{Have a look at the different isolation-levels modern databases provide. What kind of problems might
+occur due to concurrency issues at what kind of level? Is it really necessary to protect your application
+against every type of flaw?}
+
+\subsection{9. Database Indices (2 Point)}
+
+\emph{What is the purpose and functioning of a database index? Using which data structures do database
+management systems typically store an index internally, and what are important characteristics of these
+data structures? What is the basic tradeoff of using an index, what are its limitations? Think of two
+concrete examples - one in which an index leads to an improvement and one in which the index is useless
+(i.e., does not lead to an improvement).}
+
+\subsection{10. NoSQL Databases (2 Point)}
+
+\emph{What general types of NoSQL databases exist? Name prominent examples for each type of database,
+and argue when you should be using them (and also, when you should specifically not use them).}
 
 \end{document}
