@@ -1,6 +1,25 @@
 \documentclass[a4paper,10pt]{article}
+
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{comment}
 \usepackage[utf8]{inputenc}
+\usepackage{listings}
+
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{Gray}{gray}{0.5}
+
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{OliveGreen},
+    commentstyle=\color{Gray},
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    showspaces=false,
+    showtabs=false,
+    numbers=left,
+}
 
 \title{VU Distributed Systems Technologies \\
        SS 2013 \\
@@ -48,24 +67,131 @@ large-scale tests.
 pros and cons of each approach, when would you use which one? Answering these questions, also keep
 in mind maintainability and the different roles usually involved in software projects.}
 
-\subsection{6. Versioning (1 Point)}
+\vspace{3mm}
+
+Assuming that a developer is responsible for both the java code and the persistence behavior,
+annotations help keep the logic in one place. It therefore becomes easier to keep both
+up-to-date, and less likely to modify one while forgetting to update the other (a similar
+situation to providing documentation inline through Javadoc comments).
+
+Further advantages are:
+
+\begin{itemize}
+\item typo-preventions through compiler checks
+\item it's immediately clear if a class is an @Entity or not
+\item simple code restructuring and renaming
+\end{itemize}
+
+On the other hand, annotations could make it more difficult to grasp the structure of a class
+at a glance by interspersing annotations between actual Java code. Using XML files,
+the entire persistence configuration is kept at a single place, and does not litter
+.java files. Especially if persistence and application logic are maintained by different
+developers, XML files could prove to be a real advantage.
+
+Annotations seem to be well suited for situations in which a single developer handles
+both code and persistence, where the persistence logic is relatively simple,
+and few other vendor annotations are used.
+
+\subsection{Versioning (1 Point)}
 
 \emph{JPA provides a feature called versioning. Why and under which circumstances can this feature be useful?
-Think about a situation where optimistic locking may result in an (desired) exception.}
+Think about a situation where optimistic locking may result in a (desired) exception.}
 
-\subsection{7. Read-Locks (2 Point)}
+\vspace{3mm}
+
+Versioning provides a way of optimistic locking: concurrent transactions are initially processed
+simultaneously, and only rolled back if a conflict is detected at commit. This saves the need for 
+database locks, which provides better scalability for a large number of concurrent accesses.
+However, rolled back transactions (which translate into a thrown \lstinline|OptimisticLockException|
+in Java) must be handled manually by the programmer, who has to refresh the held entity and
+retry the commit.
+
+This works by annotating an entity field with \lstinline|@Version|. This field
+is incremented on each commit. It is then checked whether the field has been updated
+between the last entity read and the commit; if yes, the transaction is is rolled back and
+an exception is thrown.
+
+An exception can occur in the following case.
+
+\begin{figure}[hl]
+\begin{lstlisting}
+tx1.begin();
+j1 = dao.findById(1);
+j1.setNumCPUs(1);
+tx1.commit();
+\end{lstlisting}
+\caption{Executed by thread 1}
+\end{figure}
+
+\begin{figure}[hl]
+\begin{lstlisting}
+tx2.begin();
+j1 = dao.findById(1);
+
+j1.setNumCPUs(2);
+tx2.commit();
+\end{lstlisting}
+\caption{Executed by thread 2}
+\end{figure}
+
+Process 1 and 2 run in lockstep. j1 is initially set to the same entity in both threads.
+Process 1 then successfully commits in line 4, incrementing \lstinline|@Version|.
+Process 2's commit in line 5 detects the changed version and throws an exception.
+
+Optimistic locking is especially useful for situations in which only infrequent
+conflicts between transactions are expected, and the gains realized by avoiding
+database locks outweigh the additional work of manually handling conflicts.
+
+\subsection{Read-Locks (2 Point)}
 
 \emph{The EntityManager allows the programmer to set Read-locks on specified objects. What are the conse-
 quences on concurrent threads when one thread sets such a lock? Think about use-cases this behaviour
 may be adequate for. What problems can arise?}
 
-\subsection{8. Database Isolation-Levels (2 Points)}
+\vspace{3mm}
+
+As soon as a thread places a read lock (\lstinline|PESSIMISTIC_READ|) on an entity,
+writes to this entity are disallowed while reads may continue from any thread. This
+achieves repeatable-read semantics, in which repeated reads of the entity are guaranteed to return the same
+value.
+
+Possible use cases might be if several different components of an application must
+access a consistent state of an entity within a specific timeframe.
+
+Problems are mainly write starvation; if read locks are requested continuously,
+writes can be blocked indefinitely in the worst case, diminishing application performance.
+Of course, deadlocks and similar locking issues are also possible.
+
+\subsection{Database Isolation-Levels (2 Points)}
 
 \emph{Have a look at the different isolation-levels modern databases provide. What kind of problems might
 occur due to concurrency issues at what kind of level? Is it really necessary to protect your application
 against every type of flaw?}
 
-\subsection{9. Database Indices (2 Point)}
+\vspace{3mm}
+
+The isolation levels as defined by the ANSI/ISO SQL standard are as follows:
+
+\begin{itemize}
+\item Serializable: read and write locks are released at the end of the transaction. Range locks must
+      be acquired on \lstinline|SELECT| queries with a ranged \lstinline|WHERE| clause to prevent phantom
+      reads. If several transactions conflict, only one is allowed to proceed.
+\item Repeatable reads: read and write locks are released at the end of the transaction. Range locks are
+      not managed. Phantom reads (in which successive ranged \lstinline|SELECT| statements produce different
+      results) can occur.
+\item Read committed: write locks are head until the end of the transaction, while read locks are released
+      immediately after the \lstinline|SELECT| operation finishes. This isolation level can produce non-repeatable
+      reads.
+\item Read uncommitted: dirty reads are allowed, in which other transactions may receive not-yet-committed states
+      made by other transactions.
+\end{itemize}
+
+Isolation levels are always a tradeoff of performance and scalability against consistency.
+These requirements vary widely between applications. Some (such as banking transactions) have
+strict consistency requirements, while others (such as online social networks) need to scale well and
+do not care about intermittent inconsistencies.
+
+\subsection{Database Indices (2 Point)}
 
 \emph{What is the purpose and functioning of a database index? Using which data structures do database
 management systems typically store an index internally, and what are important characteristics of these
@@ -73,9 +199,55 @@ data structures? What is the basic tradeoff of using an index, what are its limi
 concrete examples - one in which an index leads to an improvement and one in which the index is useless
 (i.e., does not lead to an improvement).}
 
-\subsection{10. NoSQL Databases (2 Point)}
+\vspace{3mm}
+
+Indices are structure designed guarantee several aspects of database tables such as:
+
+\begin{itemize}
+\item speeding up lookups on particular columns,
+\item uniqueness, and
+\item ordering.
+\end{itemize}
+
+Indices are usually stored optimized data structures such as B Trees, $B^+$ Trees, and Hashtables.
+These structures are well suited for fast lookups and fast insertion. In binary trees, both lookups and insertions can be
+performed in $O(\log n)$, while hash tables perform lookups in $O(1 + \frac{n}{k})$ and insertion in constant time.
+
+Indices always trade space against performance, but are not applicable to all queries. In particular,
+indices do not help in cases where the column contents are transformed before being compared. An example of
+a potentially good speed-up is: \lstinline|SELECT ... FROM ... WHERE indexed_column = 'specific_value'|.
+The following query will not use the index optimally: \lstinline|SELECT ... FROM ... WHERE indexed_column LIKE '%b'|.
+
+\subsection{NoSQL Databases (2 Point)}
 
 \emph{What general types of NoSQL databases exist? Name prominent examples for each type of database,
 and argue when you should be using them (and also, when you should specifically not use them).}
+
+\vspace{3mm}
+
+% TODO: Further advantages/disadvantages, when not to use them.
+
+Document store. These databases assume that documents encapsulate data in some form of well defined
+format such as XML or JSON. Documents could be organized by collections, tags, or directory hierarchies.
+Contrary to relational databases, each document in a collection could have a completely different
+structure.
+Prominent examples: CouchDB (JSON), MongoDB (BSON, a binary JSON format).
+
+Graph. Data whose relations can be well represented as a graph such as social relations,
+network topologies, public transport systems.
+Prominent examples: IBM DB2, InfiniteGraph.
+
+Key-value store. Schema-less storage which stores values associated with keys. The structure of the
+value is not fixed, and can be different for every key.
+Prominent examples: Amazon DynamoDB, MongoDB, Berkeley DB.
+
+Object databases. Unlike relational databases, which are table-oriented, object databases are
+object-oriented similar to object-oriented programming. These kinds of databases are well suited
+for integration with applications because of their similar paradigm, avoiding the clear division
+between the database model and the application required by relational database systems.
+Inheritance is supported. Advantages are easier navigation, usage of the same model as applications, less
+required code for persistence, suitability to distributed architectures. Disadvantages are
+higher complexity that relational models, less available tools, less stable standards.
+Prominent examples: OpenLink Virtuoso, ObjectDB.
 
 \end{document}
