@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -31,10 +33,13 @@ public class Cluster implements ICluster {
     private Date lastService;
     private Date nextService;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, targetEntity = Cluster.class, mappedBy = "partOf")
+    @ManyToMany(cascade = CascadeType.PERSIST, targetEntity = Cluster.class)
+    @JoinTable(name = "composed_of",
+               joinColumns = @JoinColumn(name = "partOf_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "composedOf_id", referencedColumnName = "id"))
     private List<ICluster> composedOf = new ArrayList<ICluster>();
 
-    @ManyToMany(targetEntity = Cluster.class)
+    @ManyToMany(targetEntity = Cluster.class, mappedBy = "composedOf")
     private List<ICluster> partOf = new ArrayList<ICluster>();
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Computer.class)
