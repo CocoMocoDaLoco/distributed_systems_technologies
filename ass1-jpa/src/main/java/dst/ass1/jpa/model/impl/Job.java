@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import dst.ass1.jpa.model.IEnvironment;
 import dst.ass1.jpa.model.IExecution;
@@ -14,6 +16,7 @@ import dst.ass1.jpa.model.IJob;
 import dst.ass1.jpa.model.IUser;
 
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "environment_id" }) })
 public class Job implements IJob {
 
     @Id
