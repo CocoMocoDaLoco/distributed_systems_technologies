@@ -36,7 +36,7 @@ public class Execution implements IExecution {
     @Enumerated(value = EnumType.STRING)
     private JobStatus status;
 
-    @ManyToMany(targetEntity = Computer.class)
+    @ManyToMany(targetEntity = Computer.class, mappedBy = "executions")
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     /* TODO: Why does inserting optional = false break multiple test cases? */
