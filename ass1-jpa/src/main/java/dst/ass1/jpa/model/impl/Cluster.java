@@ -42,7 +42,7 @@ public class Cluster implements ICluster {
     @ManyToMany(targetEntity = Cluster.class, mappedBy = "composedOf")
     private List<ICluster> partOf = new ArrayList<ICluster>();
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Computer.class)
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     @ManyToOne(targetEntity = Admin.class, optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE })

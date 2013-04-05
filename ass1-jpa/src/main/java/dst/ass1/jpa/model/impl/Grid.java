@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class Grid implements IGrid {
     @ManyToMany(targetEntity = Membership.class)
     private List<IMembership> memberships = new ArrayList<IMembership>();
 
-    @OneToMany(targetEntity = Cluster.class)
+    @OneToMany(targetEntity = Cluster.class, cascade = CascadeType.REMOVE)
     private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override

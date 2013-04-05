@@ -3,6 +3,7 @@ package dst.ass1.jpa.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -51,7 +52,7 @@ public class User extends Person implements IUser {
     private String accountNo;
     private String bankCode;
 
-    @OneToMany(targetEntity = Job.class, mappedBy = "user")
+    @OneToMany(targetEntity = Job.class, mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<IJob> jobs = new ArrayList<IJob>();
 
     @OneToMany(targetEntity = Membership.class, mappedBy = "user")

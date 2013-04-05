@@ -37,11 +37,11 @@ public class Execution implements IExecution {
     @Enumerated(value = EnumType.STRING)
     private JobStatus status;
 
-    @ManyToMany(targetEntity = Computer.class, mappedBy = "executions", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(targetEntity = Computer.class, mappedBy = "executions",cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     /* TODO: Why does inserting optional = false break multiple test cases? */
-    @OneToOne(targetEntity = Job.class)
+    @OneToOne(targetEntity = Job.class, cascade = { CascadeType.MERGE })
     private IJob job;
 
     @Override

@@ -3,6 +3,7 @@ package dst.ass1.jpa.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
@@ -12,7 +13,7 @@ import dst.ass1.jpa.model.ICluster;
 @Entity
 public class Admin extends Person implements IAdmin {
 
-    @OneToMany(targetEntity = Cluster.class)
+    @OneToMany(targetEntity = Cluster.class, cascade = CascadeType.REMOVE)
     private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override
