@@ -17,6 +17,14 @@
             </entity-listeners>
         </persistence-unit-defaults>
     </persistence-unit-metadata>
+    <named-query name="findComputersInVienna">
+        <query>
+            select c, e.start, e.end
+            from Computer c
+            join c.executions e
+            where c.location like 'AUT-VIE%'
+        </query>
+    </named-query>
     <entity class="dst.ass1.jpa.model.impl.Computer" name="Computer">        
         <table name="Computer"/>
         <attributes>
