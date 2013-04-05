@@ -27,6 +27,9 @@ public abstract class GenericJpaDAO<T> implements GenericDAO<T> {
             return null;
         }
 
+        System.out.printf("%s: Found %d objects in %s for key %d%n",
+                          GenericJpaDAO.class.getName(), l.size(), getTableName(), id);
+
         return l.get(0);
     }
 
@@ -34,7 +37,12 @@ public abstract class GenericJpaDAO<T> implements GenericDAO<T> {
     @Override
     public List<T> findAll() {
         String query = String.format("from %s", getTableName());
-        return session.createQuery(query).list();
+        List<T> l = session.createQuery(query).list();
+
+        System.out.printf("%s: Found %d objects in %s%n",
+                GenericJpaDAO.class.getName(), l.size(), getTableName());
+
+        return l;
     }
 
     protected abstract String getTableName();

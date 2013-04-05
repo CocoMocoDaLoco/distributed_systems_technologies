@@ -16,6 +16,7 @@ public class CpuCountValidator implements ConstraintValidator<CPUs, Integer> {
 
     @Override
     public boolean isValid(Integer object, ConstraintValidatorContext constraintContext) {
+        System.out.printf("%s: isValid%n", CpuCountValidator.class.getName());
         int i = object.intValue();
         return (i <= max && i >= min);
     }

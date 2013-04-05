@@ -15,6 +15,7 @@ import com.mongodb.util.JSON;
 
 import dst.ass1.jpa.dao.DAOFactory;
 import dst.ass1.jpa.dao.IJobDAO;
+import dst.ass1.jpa.listener.ComputerListener;
 import dst.ass1.jpa.model.IJob;
 import dst.ass1.nosql.IMongoDbDataLoader;
 import dst.ass1.nosql.MongoTestData;
@@ -31,6 +32,8 @@ public class MongoDbDataLoader implements IMongoDbDataLoader {
 
     @Override
     public void loadData() throws Exception {
+        System.out.printf("%s: loadData%n", MongoDbDataLoader.class.getName());
+        
         Session session = entityManager.unwrap(Session.class);
         IJobDAO jobDAO = new DAOFactory(session).getJobDAO();
         List<IJob> jobs = jobDAO.findJobForStatusFinishedStartandFinish(null, null);
