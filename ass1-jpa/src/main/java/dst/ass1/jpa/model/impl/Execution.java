@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,7 +37,7 @@ public class Execution implements IExecution {
     @Enumerated(value = EnumType.STRING)
     private JobStatus status;
 
-    @ManyToMany(targetEntity = Computer.class, mappedBy = "executions")
+    @ManyToMany(targetEntity = Computer.class, mappedBy = "executions", cascade = CascadeType.PERSIST)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
     /* TODO: Why does inserting optional = false break multiple test cases? */

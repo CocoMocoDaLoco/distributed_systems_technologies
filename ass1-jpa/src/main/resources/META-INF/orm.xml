@@ -46,12 +46,21 @@
             <basic name="lastUpdate">
                 <column name="lastUpdate"/>
             </basic>
-            <many-to-one name="cluster" target-entity="dst.ass1.jpa.model.impl.Cluster" optional="false"/>
+            <many-to-one name="cluster" target-entity="dst.ass1.jpa.model.impl.Cluster" optional="false">
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                </cascade>
+            </many-to-one>
             <many-to-many name="executions" target-entity="dst.ass1.jpa.model.impl.Execution">
                 <join-table name="execution_computer">
                     <join-column name="computers_id" referenced-column-name="id"/>
                     <inverse-join-column name="executions_id" referenced-column-name="id"/>
                 </join-table>
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-merge/>
+                </cascade>
             </many-to-many>
         </attributes>
     </entity>
