@@ -26,13 +26,13 @@ public class Job implements IJob {
     private Integer executionTime;
     private boolean isPaid;
 
-    @OneToOne(targetEntity = Environment.class, cascade = CascadeType.PERSIST, optional = false)
+    @OneToOne(targetEntity = Environment.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
     private IEnvironment environment;
 
-    @ManyToOne(targetEntity = User.class, cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(targetEntity = User.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
     private IUser user;
 
-    @OneToOne(targetEntity = Execution.class, cascade = CascadeType.PERSIST, optional = false)
+    @OneToOne(targetEntity = Execution.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
     private IExecution execution;
 
     @Override

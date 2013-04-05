@@ -33,7 +33,7 @@ public class Cluster implements ICluster {
     private Date lastService;
     private Date nextService;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, targetEntity = Cluster.class)
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Cluster.class)
     @JoinTable(name = "composed_of",
                joinColumns = @JoinColumn(name = "partOf_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "composedOf_id", referencedColumnName = "id"))
@@ -42,13 +42,13 @@ public class Cluster implements ICluster {
     @ManyToMany(targetEntity = Cluster.class, mappedBy = "composedOf")
     private List<ICluster> partOf = new ArrayList<ICluster>();
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Computer.class)
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Computer.class)
     private List<IComputer> computers = new ArrayList<IComputer>();
 
-    @ManyToOne(targetEntity = Admin.class, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = Admin.class, optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private IAdmin admin;
 
-    @ManyToOne(targetEntity = Grid.class, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = Grid.class, optional = false, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private IGrid grid;
 
     @Override
