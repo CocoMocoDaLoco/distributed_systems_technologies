@@ -216,6 +216,9 @@
 			<modules>
 				<module>ass1-jpa</module>
 				<module>ass1-nosql</module>
+				<module>ass2-di</module>
+				<module>ass2-ejb</module>
+				<module>ass2-ws</module>
 			</modules>
 		</profile>
 
@@ -230,6 +233,123 @@
 			<id>ass1-nosql</id>
 			<modules>
 				<module>ass1-nosql</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>ass2-di</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>dst/ass2/di/**/*Transparent*.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>ass2-di</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>ass2-di-agent</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<archive>
+								<manifestEntries>
+									<Premain-Class>dst.ass2.di.agent.InjectorAgent</Premain-Class>
+								</manifestEntries>
+							</archive>
+							<finalName>dst-di-agent</finalName>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<phase>test-compile</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<argLine>-javaagent:"${project.build.directory}/dst-di-agent.jar"</argLine>
+							<includes>
+								<include>dst/ass2/di/**/*Transparent*.java</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>ass2-di</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>ass2-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>ass1-jpa</module>
+				<module>ass2-ejb</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>ass2-ejb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>dst/ass2/ejb/**</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>ass1-jpa</module>
+				<module>ass2-ejb</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>ass2-ws</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>dst/ass2/ws/**</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>ass1-jpa</module>
+				<module>ass2-ejb</module>
+				<module>ass2-ws</module>
 			</modules>
 		</profile>
 

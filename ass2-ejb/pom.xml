@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>dst</artifactId>
+		<groupId>at.ac.tuwien.infosys.dst</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ass2-ejb</artifactId>
+	<name>ass2-ejb</name>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>at.ac.tuwien.infosys.dst</groupId>
+			<artifactId>ass1-jpa</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+<!-- 		<dependency> -->
+<!-- 			<groupId>javax</groupId> -->
+<!-- 			<artifactId>javaee-api</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-6.0</artifactId>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<id>ass2-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>at.ac.tuwien.infosys.dst</groupId>
+									<artifactId>ass1-jpa</artifactId>
+								</artifactItem>
+							</artifactItems>
+							<excludeGroupIds>javax,cglib,junit,org.jboss.spec</excludeGroupIds>
+							<excludes>META-INF/**</excludes>
+							<outputDirectory>${basedir}/target/classes</outputDirectory>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-ejb-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<ejbVersion>3.1</ejbVersion>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>ejb</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.glassfish.embedded</groupId>
+						<artifactId>maven-embedded-glassfish-plugin</artifactId>
+						<version>3.1.2.2</version>
+						<configuration>
+							<app>target/${project.build.finalName}.jar</app>
+							<name>${project.name}</name>
+							<autoDelete>true</autoDelete>
+							<port>8080</port>
+							<contextRoot>${project.name}</contextRoot>
+							<configFile>${basedir}/src/main/resources/domain.xml</configFile>
+							<systemProperties>
+								<property>glassfish.embedded.tmpdir=${java.io.tmpdir}/dst</property>
+							</systemProperties>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>run</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>ass2-ejb</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.glassfish.appclient</groupId>
+					<artifactId>gf-client</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>ass2-ws</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.glassfish.appclient</groupId>
+					<artifactId>gf-client</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+</project>

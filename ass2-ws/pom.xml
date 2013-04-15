@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>dst</artifactId>
+		<groupId>at.ac.tuwien.infosys.dst</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ass2-ws</artifactId>
+	<name>ass2-ws</name>
+
+
+	<build>
+	<!-- TODO remove -->
+<!-- 		<sourceDirectory>target/jaxws/wsimport/java</sourceDirectory> -->
+<!-- 		<plugins> -->
+		<!-- TODO check/remove -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<artifactId>jaxws-maven-plugin</artifactId> -->
+<!-- 				<version>1.12</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<phase>generate-sources</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>wsimport</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<wsdlUrls> -->
+<!-- 								<wsdlUrl>http://localhost:8080/JobStatistics/service?wsdl</wsdlUrl> -->
+<!-- 							</wsdlUrls> -->
+<!-- 							<packageName>dst.ass2.ws.session</packageName> -->
+<!-- 							<xadditionalHeaders>true</xadditionalHeaders> -->
+<!-- 							<extension>true</extension> -->
+<!-- 							<keep>true</keep> -->
+<!-- 							<verbose>true</verbose> -->
+<!-- 							<target>2.0</target> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+<!-- 		</plugins> -->
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>at.ac.tuwien.infosys.dst</groupId>
+			<artifactId>ass2-ejb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-6.0</artifactId>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.appclient</groupId>
+			<artifactId>gf-client</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>javax</groupId> -->
+<!-- 			<artifactId>javaee-api</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.glassfish.common</groupId>
+			<artifactId>glassfish-naming</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>
