@@ -7,11 +7,11 @@ import dst.ass2.ejb.ws.IGetStatsResponse;
 
 public class JobStatisticsBean implements IJobStatisticsBean {
 
-	public IGetStatsResponse getStatisticsForGrid(
-			IGetStatsRequest request, 
-			String name) throws WebServiceException {
-		// TODO
-		return null;
-	}
+    public IGetStatsResponse getStatisticsForGrid(
+            IGetStatsRequest request, 
+            String name) throws WebServiceException {
+        // TODO
+        return null;
+    }
 
 }

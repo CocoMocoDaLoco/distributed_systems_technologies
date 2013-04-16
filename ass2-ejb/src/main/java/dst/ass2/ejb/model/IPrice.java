@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 
 public interface IPrice {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
-	public Integer getNrOfHistoricalJobs();
+    public Integer getNrOfHistoricalJobs();
 
-	public void setNrOfHistoricalJobs(Integer nrOfHistoricalJobs);
+    public void setNrOfHistoricalJobs(Integer nrOfHistoricalJobs);
 
-	public BigDecimal getPrice();
+    public BigDecimal getPrice();
 
-	public void setPrice(BigDecimal price);
+    public void setPrice(BigDecimal price);
 
 }

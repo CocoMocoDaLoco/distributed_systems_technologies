@@ -9,33 +9,33 @@ import dst.ass2.ejb.dto.BillDTO;
 
 public interface IGeneralManagementBean {
 
-	/**
-	 * Helper method to add a price-step using the IPriceManagementBean
-	 * 
-	 * @param nrOfHistoricalJobs
-	 * @param price
-	 */
-	public void addPrice(Integer nrOfHistoricalJobs, BigDecimal price);
+    /**
+     * Helper method to add a price-step using the IPriceManagementBean
+     * 
+     * @param nrOfHistoricalJobs
+     * @param price
+     */
+    public void addPrice(Integer nrOfHistoricalJobs, BigDecimal price);
 
-	/**
-	 * Retrieves the bill for the given user.
-	 * 
-	 * @param username
-	 * @return the bill as BillDTO
-	 * @throws Exception
-	 */
-	public Future<BillDTO> getBillForUser(String username) throws Exception;
+    /**
+     * Retrieves the bill for the given user.
+     * 
+     * @param username
+     * @return the bill as BillDTO
+     * @throws Exception
+     */
+    public Future<BillDTO> getBillForUser(String username) throws Exception;
 
-	/**
-	 * Retrieves all created audits.
-	 * 
-	 * @return list of audits
-	 */
-	public List<AuditLogDTO> getAuditLogs();
+    /**
+     * Retrieves all created audits.
+     * 
+     * @return list of audits
+     */
+    public List<AuditLogDTO> getAuditLogs();
 
-	/**
-	 * Helper method to clear the cache of the IPriceManagementBean
-	 */
-	public void clearPriceCache();
+    /**
+     * Helper method to clear the cache of the IPriceManagementBean
+     */
+    public void clearPriceCache();
 
 }

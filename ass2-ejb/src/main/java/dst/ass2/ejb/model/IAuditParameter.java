@@ -2,24 +2,24 @@ package dst.ass2.ejb.model;
 
 public interface IAuditParameter {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
-	public Integer getParameterIndex();
+    public Integer getParameterIndex();
 
-	public void setParameterIndex(Integer parameterIndex);
+    public void setParameterIndex(Integer parameterIndex);
 
-	public String getType();
+    public String getType();
 
-	public void setType(String type);
+    public void setType(String type);
 
-	public String getValue();
+    public String getValue();
 
-	public void setValue(String value);
+    public void setValue(String value);
 
-	public IAuditLog getAuditLog();
+    public IAuditLog getAuditLog();
 
-	public void setAuditLog(IAuditLog auditLog);
+    public void setAuditLog(IAuditLog auditLog);
 
 }

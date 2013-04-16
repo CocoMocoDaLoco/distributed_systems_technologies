@@ -8,6 +8,6 @@ import dst.ass2.ejb.dto.StatisticsDTO;
  */
 public interface IGetStatsResponse {
 
-	StatisticsDTO getStatistics();
+    StatisticsDTO getStatistics();
 
 }

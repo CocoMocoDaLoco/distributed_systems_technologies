@@ -26,75 +26,75 @@ import dst.ass2.util.JDBCTestUtil;
 
 public abstract class AbstractEJBTest {
 
-	protected InitialContext ctx;
-	protected JdbcConnection jdbcConnection;
-	protected ITestingBean testingBean;
-	protected IGeneralManagementBean managementBean;
+    protected InitialContext ctx;
+    protected JdbcConnection jdbcConnection;
+    protected ITestingBean testingBean;
+    protected IGeneralManagementBean managementBean;
 
-	protected JDBCTestUtil jdbcTestUtil;
+    protected JDBCTestUtil jdbcTestUtil;
 
-	@Before
-	public void init() throws Exception {
-		ctx = new InitialContext();
-		jdbcConnection = new JdbcConnection();
+    @Before
+    public void init() throws Exception {
+        ctx = new InitialContext();
+        jdbcConnection = new JdbcConnection();
 
-		testingBean = lookup(ctx, TestingBean.class);
-		managementBean = lookup(ctx, GeneralManagementBean.class);
+        testingBean = lookup(ctx, TestingBean.class);
+        managementBean = lookup(ctx, GeneralManagementBean.class);
 
-		JdbcHelper.cleanTables(jdbcConnection);
-		testingBean.insertTestData();
+        JdbcHelper.cleanTables(jdbcConnection);
+        testingBean.insertTestData();
 
-		jdbcTestUtil = new JDBCTestUtil(jdbcConnection);
-	}
+        jdbcTestUtil = new JDBCTestUtil(jdbcConnection);
+    }
 
-	@After
-	public void clean() {
-		if (jdbcConnection != null) {
-			try {
-				jdbcConnection.disconnect();
-			} catch (SQLException e) {
-			}
-		}
+    @After
+    public void clean() {
+        if (jdbcConnection != null) {
+            try {
+                jdbcConnection.disconnect();
+            } catch (SQLException e) {
+            }
+        }
 
-		if (ctx != null) {
-			try {
-				ctx.close();
-			} catch (NamingException e) {
-			}
-		}
-	}
+        if (ctx != null) {
+            try {
+                ctx.close();
+            } catch (NamingException e) {
+            }
+        }
+    }
 
-	protected void managementBean_clearPrices() {
-		managementBean.clearPriceCache();
-	}
+    protected void managementBean_clearPrices() {
+        managementBean.clearPriceCache();
+    }
 
-	protected void managementBean_addPrices() {
-		managementBean.addPrice(0, new BigDecimal(50));
-		managementBean.addPrice(1, new BigDecimal(45));
-		managementBean.addPrice(2, new BigDecimal(40));
-		managementBean.addPrice(4, new BigDecimal(35));
-		managementBean.addPrice(10, new BigDecimal(30));
-		managementBean.addPrice(20, new BigDecimal(20));
-		managementBean.addPrice(100, new BigDecimal(15));
-	}
+    protected void managementBean_addPrices() {
+        managementBean.addPrice(0, new BigDecimal(50));
+        managementBean.addPrice(1, new BigDecimal(45));
+        managementBean.addPrice(2, new BigDecimal(40));
+        managementBean.addPrice(4, new BigDecimal(35));
+        managementBean.addPrice(10, new BigDecimal(30));
+        managementBean.addPrice(20, new BigDecimal(20));
+        managementBean.addPrice(100, new BigDecimal(15));
+    }
 
-	protected void jobmanagementBean_addJobs(List<Long> gridIds)
-			throws NamingException, AssignmentException {
-		IJobManagementBean jobManagementBean = lookup(ctx,
-				JobManagementBean.class);
+    protected void jobmanagementBean_addJobs(List<Long> gridIds)
+            throws NamingException, AssignmentException {
+        IJobManagementBean jobManagementBean = lookup(ctx,
+                JobManagementBean.class);
 
-		jobManagementBean.login("hansi", "pw");
+        jobManagementBean.login("hansi", "pw");
 
-		List<String> params1 = new ArrayList<String>();
-		params1.add("param1");
-		params1.add("param2");
-		jobManagementBean.addJob(gridIds.get(0), 2, "workflow1", params1);
+        List<String> params1 = new ArrayList<String>();
+        params1.add("param1");
+        params1.add("param2");
+        jobManagementBean.addJob(gridIds.get(0), 2, "workflow1", params1);
 
-		List<String> params2 = new ArrayList<String>();
-		params2.add("param1");
-		jobManagementBean.addJob(gridIds.get(1), 6, "workflow2", params2);
+        List<String> params2 = new ArrayList<String>();
+        params2.add("param1");
+        jobManagementBean.addJob(gridIds.get(1), 6, "workflow2", params2);
 
-		jobManagementBean.submitAssignments();
-	}
+        jobManagementBean.submitAssignments();
+    }
 
 }

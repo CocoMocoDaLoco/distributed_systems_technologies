@@ -6,14 +6,14 @@ package dst.ass2.ejb.ws;
  */
 public interface IGetStatsRequest {
 
-	/**
-	 * @return maximum number of executions in the statistics
-	 */
-	int getMaxExecutions();
+    /**
+     * @return maximum number of executions in the statistics
+     */
+    int getMaxExecutions();
 
-	/**
-	 * @param maxExecutions maximum number of executions in the statistics
-	 */
-	void setMaxExecutions(int maxExecutions);
+    /**
+     * @param maxExecutions maximum number of executions in the statistics
+     */
+    void setMaxExecutions(int maxExecutions);
 
 }

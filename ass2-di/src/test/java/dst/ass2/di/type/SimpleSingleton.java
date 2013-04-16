@@ -6,6 +6,6 @@ import dst.ass2.di.model.ScopeType;
 
 @Component(scope = ScopeType.SINGLETON)
 public class SimpleSingleton {
-	@ComponentId
-	public Long id;
+    @ComponentId
+    public Long id;
 }

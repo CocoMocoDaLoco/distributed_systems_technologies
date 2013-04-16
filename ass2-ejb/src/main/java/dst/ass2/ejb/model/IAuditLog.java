@@ -5,24 +5,24 @@ import java.util.List;
 
 public interface IAuditLog {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
-	public String getMethod();
+    public String getMethod();
 
-	public void setMethod(String method);
+    public void setMethod(String method);
 
-	public String getResult();
+    public String getResult();
 
-	public void setResult(String result);
+    public void setResult(String result);
 
-	public Date getInvocationTime();
+    public Date getInvocationTime();
 
-	public void setInvocationTime(Date invocationTime);
+    public void setInvocationTime(Date invocationTime);
 
-	public List<IAuditParameter> getParameters();
+    public List<IAuditParameter> getParameters();
 
-	public void setParameters(List<IAuditParameter> parameters);
+    public void setParameters(List<IAuditParameter> parameters);
 
 }

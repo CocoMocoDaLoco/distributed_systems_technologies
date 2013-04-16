@@ -8,8 +8,8 @@ import dst.ass2.di.model.ScopeType;
 @Component(scope = ScopeType.PROTOTYPE)
 @SuppressWarnings("unused")
 public class SubType extends SuperType {
-	@ComponentId
-	private Long id;
-	@Inject
-	private SimpleComponent component;
+    @ComponentId
+    private Long id;
+    @Inject
+    private SimpleComponent component;
 }

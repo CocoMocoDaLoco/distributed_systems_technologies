@@ -26,220 +26,220 @@ import dst.ass2.ejb.session.interfaces.IJobManagementBean;
 
 public class Test_Bill extends AbstractEJBTest {
 
-	@Before
-	public void setUp() {
-		managementBean.clearPriceCache();
-	}
+    @Before
+    public void setUp() {
+        managementBean.clearPriceCache();
+    }
 
-	@After
-	public void tearDown() {
-	}
+    @After
+    public void tearDown() {
+    }
 
-	@Test
-	public void testGetBill_forUser_Hansi() {
-		try {
-			// get all available grid-ids from db
-			List<Long> gridIds = jdbcTestUtil.getAllGridIds_FROM_DB();
+    @Test
+    public void testGetBill_forUser_Hansi() {
+        try {
+            // get all available grid-ids from db
+            List<Long> gridIds = jdbcTestUtil.getAllGridIds_FROM_DB();
 
-			assertEquals(2, gridIds.size());
+            assertEquals(2, gridIds.size());
 
-			// add prices to management bean
-			managementBean_addPrices();
+            // add prices to management bean
+            managementBean_addPrices();
 
-			// add jobs to job management bean
-			jobmanagementBean_addJobs(gridIds);
+            // add jobs to job management bean
+            jobmanagementBean_addJobs(gridIds);
 
-			// finish all jobs on db level!
-			JdbcHelper.finishAllJobs(jdbcConnection);
+            // finish all jobs on db level!
+            JdbcHelper.finishAllJobs(jdbcConnection);
 
-			Future<BillDTO> result = managementBean.getBillForUser("hansi");
-			while (!result.isDone()) {
-				Thread.sleep(100);
-			}
+            Future<BillDTO> result = managementBean.getBillForUser("hansi");
+            while (!result.isDone()) {
+                Thread.sleep(100);
+            }
 
-			// gather all paid jobs for user
-			List<Long> jobIds = jdbcTestUtil
-					.getPaidJobsForUser_FROM_DB("hansi");
+            // gather all paid jobs for user
+            List<Long> jobIds = jdbcTestUtil
+                    .getPaidJobsForUser_FROM_DB("hansi");
 
-			assertEquals(3, jobIds.size());
+            assertEquals(3, jobIds.size());
 
-			BillDTO billDTO = result.get();
-			assertNotNull(billDTO);
+            BillDTO billDTO = result.get();
+            assertNotNull(billDTO);
 
-			List<BillPerJob> bills = billDTO.getBills();
-			assertNotNull(bills);
-			assertEquals(3, bills.size());
+            List<BillPerJob> bills = billDTO.getBills();
+            assertNotNull(bills);
+            assertEquals(3, bills.size());
 
-			Map<Long, BillPerJob> temp = createMap(bills);
+            Map<Long, BillPerJob> temp = createMap(bills);
 
-			BillPerJob bill = temp.get(jobIds.get(0));
+            BillPerJob bill = temp.get(jobIds.get(0));
 
-			assertNotNull(bill);
-			assertNotNull(bill.getNumberOfComputers());
-			assertTrue(bill.getNumberOfComputers().intValue() >= 1);
-			assertNotNull(bill.getSetupCosts());
-			assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(45.00)) == 0);
-			assertNotNull(bill.getExecutionCosts());
-			assertTrue(bill.getExecutionCosts().compareTo(
-					new BigDecimal(135.00)) == 0);
-			assertNotNull(bill.getJobCosts());
-			assertTrue(bill.getJobCosts().compareTo(new BigDecimal(180.00)) == 0);
+            assertNotNull(bill);
+            assertNotNull(bill.getNumberOfComputers());
+            assertTrue(bill.getNumberOfComputers().intValue() >= 1);
+            assertNotNull(bill.getSetupCosts());
+            assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(45.00)) == 0);
+            assertNotNull(bill.getExecutionCosts());
+            assertTrue(bill.getExecutionCosts().compareTo(
+                    new BigDecimal(135.00)) == 0);
+            assertNotNull(bill.getJobCosts());
+            assertTrue(bill.getJobCosts().compareTo(new BigDecimal(180.00)) == 0);
 
-			bill = temp.get(jobIds.get(1));
+            bill = temp.get(jobIds.get(1));
 
-			assertNotNull(bill);
-			assertNotNull(bill.getNumberOfComputers());
-			assertTrue(bill.getNumberOfComputers().intValue() >= 1);
-			assertNotNull(bill.getSetupCosts());
-			assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(40.50)) == 0);
-			assertNotNull(bill.getExecutionCosts());
-			assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
-			assertNotNull(bill.getJobCosts());
-			assertTrue(bill.getJobCosts().compareTo(new BigDecimal(40.50)) == 0);
+            assertNotNull(bill);
+            assertNotNull(bill.getNumberOfComputers());
+            assertTrue(bill.getNumberOfComputers().intValue() >= 1);
+            assertNotNull(bill.getSetupCosts());
+            assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(40.50)) == 0);
+            assertNotNull(bill.getExecutionCosts());
+            assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
+            assertNotNull(bill.getJobCosts());
+            assertTrue(bill.getJobCosts().compareTo(new BigDecimal(40.50)) == 0);
 
-			bill = temp.get(jobIds.get(2));
+            bill = temp.get(jobIds.get(2));
 
-			assertNotNull(bill);
-			assertNotNull(bill.getNumberOfComputers());
-			assertTrue(bill.getNumberOfComputers().intValue() >= 1);
-			assertNotNull(bill.getSetupCosts());
-			assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(28.00)) == 0);
-			assertNotNull(bill.getExecutionCosts());
-			assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
-			assertNotNull(bill.getJobCosts());
-			assertTrue(bill.getJobCosts().compareTo(new BigDecimal(28.00)) == 0);
+            assertNotNull(bill);
+            assertNotNull(bill.getNumberOfComputers());
+            assertTrue(bill.getNumberOfComputers().intValue() >= 1);
+            assertNotNull(bill.getSetupCosts());
+            assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(28.00)) == 0);
+            assertNotNull(bill.getExecutionCosts());
+            assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
+            assertNotNull(bill.getJobCosts());
+            assertTrue(bill.getJobCosts().compareTo(new BigDecimal(28.00)) == 0);
 
-			assertNotNull(billDTO.getTotalPrice());
-			assertTrue(billDTO.getTotalPrice()
-					.compareTo(new BigDecimal(248.50)) == 0);
-			assertNotNull(billDTO.getUsername());
-			assertTrue(billDTO.getUsername().equals("hansi"));
+            assertNotNull(billDTO.getTotalPrice());
+            assertTrue(billDTO.getTotalPrice()
+                    .compareTo(new BigDecimal(248.50)) == 0);
+            assertNotNull(billDTO.getUsername());
+            assertTrue(billDTO.getUsername().equals("hansi"));
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(String.format("Unexpected Exception: %s !", e.getMessage()));
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(String.format("Unexpected Exception: %s !", e.getMessage()));
+        }
 
-	}
+    }
 
-	@Test
-	public void testGetBill_forUser_Franz() {
-		try {
-			// get all available grid-ids from db
-			List<Long> gridIds = jdbcTestUtil.getAllGridIds_FROM_DB();
+    @Test
+    public void testGetBill_forUser_Franz() {
+        try {
+            // get all available grid-ids from db
+            List<Long> gridIds = jdbcTestUtil.getAllGridIds_FROM_DB();
 
-			assertEquals(2, gridIds.size());
+            assertEquals(2, gridIds.size());
 
-			// add prices to management bean
-			managementBean_addPrices();
+            // add prices to management bean
+            managementBean_addPrices();
 
-			// add jobs for user franz
-			IJobManagementBean jobManagementBean = lookup(ctx,
-					JobManagementBean.class);
+            // add jobs for user franz
+            IJobManagementBean jobManagementBean = lookup(ctx,
+                    JobManagementBean.class);
 
-			jobManagementBean.login("franz", "liebe");
+            jobManagementBean.login("franz", "liebe");
 
-			List<String> params3 = new ArrayList<String>();
-			params3.add("param1");
-			params3.add("param2");
-			params3.add("param3");
-			params3.add("param4");
-			jobManagementBean.addJob(gridIds.get(0), new Integer(2),
-					"workflow3", params3);
+            List<String> params3 = new ArrayList<String>();
+            params3.add("param1");
+            params3.add("param2");
+            params3.add("param3");
+            params3.add("param4");
+            jobManagementBean.addJob(gridIds.get(0), new Integer(2),
+                    "workflow3", params3);
 
-			List<String> params5 = new ArrayList<String>();
+            List<String> params5 = new ArrayList<String>();
 
-			jobManagementBean.addJob(gridIds.get(0), new Integer(3),
-					"workflow5", params5);
+            jobManagementBean.addJob(gridIds.get(0), new Integer(3),
+                    "workflow5", params5);
 
-			jobManagementBean.submitAssignments();
+            jobManagementBean.submitAssignments();
 
-			// finish all jobs on db level!
-			JdbcHelper.finishAllJobs(jdbcConnection);
+            // finish all jobs on db level!
+            JdbcHelper.finishAllJobs(jdbcConnection);
 
-			Future<BillDTO> result = managementBean.getBillForUser("franz");
+            Future<BillDTO> result = managementBean.getBillForUser("franz");
 
-			while (!result.isDone()) {
-				Thread.sleep(100);
-			}
+            while (!result.isDone()) {
+                Thread.sleep(100);
+            }
 
-			// gather all paid jobs for user
-			List<Long> jobIds = jdbcTestUtil
-					.getPaidJobsForUser_FROM_DB("franz");
-			assertEquals(2, jobIds.size());
+            // gather all paid jobs for user
+            List<Long> jobIds = jdbcTestUtil
+                    .getPaidJobsForUser_FROM_DB("franz");
+            assertEquals(2, jobIds.size());
 
-			BillDTO billDTO = result.get();
-			assertNotNull(billDTO);
+            BillDTO billDTO = result.get();
+            assertNotNull(billDTO);
 
-			List<BillPerJob> bills = billDTO.getBills();
-			assertNotNull(bills);
+            List<BillPerJob> bills = billDTO.getBills();
+            assertNotNull(bills);
 
-			assertEquals(2, bills.size());
+            assertEquals(2, bills.size());
 
-			Map<Long, BillPerJob> temp = createMap(bills);
+            Map<Long, BillPerJob> temp = createMap(bills);
 
-			BillPerJob bill = temp.get(jobIds.get(0));
+            BillPerJob bill = temp.get(jobIds.get(0));
 
-			assertNotNull(bill);
-			assertNotNull(bill.getNumberOfComputers());
-			assertTrue(bill.getNumberOfComputers().intValue() >= 1);
-			assertNotNull(bill.getSetupCosts());
-			assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(40.00)) == 0);
-			assertNotNull(bill.getExecutionCosts());
-			assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
-			assertNotNull(bill.getJobCosts());
-			assertTrue(bill.getJobCosts().compareTo(new BigDecimal(40.00)) == 0);
+            assertNotNull(bill);
+            assertNotNull(bill.getNumberOfComputers());
+            assertTrue(bill.getNumberOfComputers().intValue() >= 1);
+            assertNotNull(bill.getSetupCosts());
+            assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(40.00)) == 0);
+            assertNotNull(bill.getExecutionCosts());
+            assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
+            assertNotNull(bill.getJobCosts());
+            assertTrue(bill.getJobCosts().compareTo(new BigDecimal(40.00)) == 0);
 
-			bill = temp.get(jobIds.get(1));
+            bill = temp.get(jobIds.get(1));
 
-			assertNotNull(bill);
-			assertNotNull(bill.getNumberOfComputers());
-			assertTrue(bill.getNumberOfComputers().intValue() >= 1);
-			assertNotNull(bill.getSetupCosts());
-			assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(36.00)) == 0);
-			assertNotNull(bill.getExecutionCosts());
-			assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
-			assertNotNull(bill.getJobCosts());
-			assertTrue(bill.getJobCosts().compareTo(new BigDecimal(36.00)) == 0);
+            assertNotNull(bill);
+            assertNotNull(bill.getNumberOfComputers());
+            assertTrue(bill.getNumberOfComputers().intValue() >= 1);
+            assertNotNull(bill.getSetupCosts());
+            assertTrue(bill.getSetupCosts().compareTo(new BigDecimal(36.00)) == 0);
+            assertNotNull(bill.getExecutionCosts());
+            assertTrue(bill.getExecutionCosts().compareTo(new BigDecimal(0.00)) == 0);
+            assertNotNull(bill.getJobCosts());
+            assertTrue(bill.getJobCosts().compareTo(new BigDecimal(36.00)) == 0);
 
-			assertNotNull(billDTO.getTotalPrice());
-			assertTrue(billDTO.getTotalPrice().compareTo(new BigDecimal(76.00)) == 0);
-			assertNotNull(billDTO.getUsername());
-			assertTrue(billDTO.getUsername().equals("franz"));
+            assertNotNull(billDTO.getTotalPrice());
+            assertTrue(billDTO.getTotalPrice().compareTo(new BigDecimal(76.00)) == 0);
+            assertNotNull(billDTO.getUsername());
+            assertTrue(billDTO.getUsername().equals("franz"));
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(String.format("Unexpected Exception: %s !", e.getMessage()));
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(String.format("Unexpected Exception: %s !", e.getMessage()));
+        }
+    }
 
-	@Test
-	public void testGetBill_ForNotExistingUser() {
-		String username = "not_existing_user";
+    @Test
+    public void testGetBill_ForNotExistingUser() {
+        String username = "not_existing_user";
 
-		try {
-			Future<BillDTO> result = managementBean.getBillForUser(username);
+        try {
+            Future<BillDTO> result = managementBean.getBillForUser(username);
 
-			while (!result.isDone()) {
-				Thread.sleep(100);
-			}
+            while (!result.isDone()) {
+                Thread.sleep(100);
+            }
 
-			result.get();
+            result.get();
 
-			fail(String.format("User: %s should not exist!", username));
-		} catch (Exception e) {
-			// Expected exception since user should not exist!
-		}
+            fail(String.format("User: %s should not exist!", username));
+        } catch (Exception e) {
+            // Expected exception since user should not exist!
+        }
 
-	}
+    }
 
-	private Map<Long, BillPerJob> createMap(List<BillPerJob> bills) {
-		Map<Long, BillPerJob> ret = new HashMap<Long, BillPerJob>();
+    private Map<Long, BillPerJob> createMap(List<BillPerJob> bills) {
+        Map<Long, BillPerJob> ret = new HashMap<Long, BillPerJob>();
 
-		for (BillPerJob bill : bills)
-			ret.put(bill.getJobId(), bill);
+        for (BillPerJob bill : bills)
+            ret.put(bill.getJobId(), bill);
 
-		return ret;
-	}
+        return ret;
+    }
 
 }

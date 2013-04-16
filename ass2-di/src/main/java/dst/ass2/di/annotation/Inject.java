@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Inject {
-	boolean required() default true;
+    boolean required() default true;
 
-	Class<?> specificType() default Void.class;
+    Class<?> specificType() default Void.class;
 }

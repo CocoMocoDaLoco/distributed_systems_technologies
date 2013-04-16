@@ -7,13 +7,13 @@ import dst.ass2.ejb.ws.IGetStatsRequest;
  */
 public class WSRequestFactory {
 
-	/**
-	 * Create an instance of IGetStatsRequest
-	 * @return
-	 */
-	public IGetStatsRequest createGetStatsRequest() {
-		// TODO
-		return null;
-	}
+    /**
+     * Create an instance of IGetStatsRequest
+     * @return
+     */
+    public IGetStatsRequest createGetStatsRequest() {
+        // TODO
+        return null;
+    }
 
 }
