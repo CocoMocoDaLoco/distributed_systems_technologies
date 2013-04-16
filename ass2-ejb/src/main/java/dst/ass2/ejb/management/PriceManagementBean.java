@@ -1,8 +1,11 @@
 package dst.ass2.ejb.management;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Local;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -20,10 +23,12 @@ import dst.ass2.ejb.model.IPrice;
  */
 
 @Local(IPriceManagementBean.class)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Singleton
 @Startup
 public class PriceManagementBean implements IPriceManagementBean {
 
+    private final ConcurrentSkipListSet<Price> prices = new ConcurrentSkipListSet<Price>();
     //    private EntityManager entityManager;
 
     @PostConstruct
@@ -38,19 +43,34 @@ public class PriceManagementBean implements IPriceManagementBean {
 
     @Override
     public BigDecimal getPrice(Integer nrOfHistoricalJobs) {
-        // TODO
-        return new BigDecimal(0.0);
+        Price that = new Price();
+        that.setNrOfHistoricalJobs(nrOfHistoricalJobs);
+
+        Price price = prices.higher(that);
+        if (price == null) {
+            return new BigDecimal(0);
+        }
+
+        return price.getPrice();
     }
 
     @Override
     public void setPrice(Integer nrOfHistoricalJobs, BigDecimal price) {
-        // TODO
+        Price p = new Price();
+        p.setNrOfHistoricalJobs(nrOfHistoricalJobs);
+        p.setPrice(price);
+
+        prices.add(p);
+
+        /* TODO: Persist. */
     }
 
 
     @Override
     public void clearCache() {
-        // TODO
+        prices.clear();
+
+        /* TODO: Persist. */
     }
 
     @Entity
