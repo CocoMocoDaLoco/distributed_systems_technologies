@@ -2,11 +2,29 @@ package dst.ass2.ejb.management;
 
 import java.math.BigDecimal;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Local;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+
 import dst.ass2.ejb.management.interfaces.IPriceManagementBean;
 
+/* Singleton was chosen because we have a central state
+ * which needs to be initialized at startup. Both stateless and stateful
+ * session bean types are not suitable for this scenario.
+ */
+
+@Local(IPriceManagementBean.class)
+@Singleton
+@Startup
 public class PriceManagementBean implements IPriceManagementBean {
 	
 	// TODO
+
+    @PostConstruct
+    public void postConstruct() {
+        /* TODO: Load the data. */
+    }
 	
 	@Override
 	public BigDecimal getPrice(Integer nrOfHistoricalJobs) {
