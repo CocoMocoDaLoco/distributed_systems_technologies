@@ -4,7 +4,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,11 +26,15 @@ import dst.ass1.jpa.model.IExecution;
 import dst.ass1.jpa.validator.CPUs;
 
 @EntityListeners({ComputerListener.class})
+@Entity
 public class Computer implements IComputer {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Size(min = 5, max = 25)
+    @Column(unique = true)
     private String name;
 
     @CPUs(min = 4, max = 8)
@@ -34,7 +48,14 @@ public class Computer implements IComputer {
 
     @Past
     private Date lastUpdate;
+
+    @ManyToOne(targetEntity = Cluster.class, optional = false, cascade = { CascadeType.PERSIST,CascadeType.MERGE })
     private ICluster cluster;
+
+    @ManyToMany(targetEntity = Execution.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "execution_computer",
+               joinColumns = @JoinColumn(name = "computers_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "executions_id", referencedColumnName = "id"))
     private List<IExecution> executions = new ArrayList<IExecution>();
 
     @Override
