@@ -6,6 +6,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Local;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import dst.ass2.ejb.management.interfaces.IPriceManagementBean;
 import dst.ass2.ejb.model.IPrice;
@@ -20,9 +24,16 @@ import dst.ass2.ejb.model.IPrice;
 @Startup
 public class PriceManagementBean implements IPriceManagementBean {
 
+    //    private EntityManager entityManager;
+
     @PostConstruct
     public void postConstruct() {
-        /* TODO: Load the data. */
+        //        EntityManagerFactory emf = Persistence.createEntityManagerFactory("dst");
+        //        entityManager = emf.createEntityManager();
+        //        Query query = entityManager.createQuery("from " + Price.class.getName());
+        //        prices.addAll(query.getResultList());
+
+        /* TODO */
     }
 
     @Override
@@ -42,8 +53,11 @@ public class PriceManagementBean implements IPriceManagementBean {
         // TODO
     }
 
-    private static class Price implements IPrice {
+    @Entity
+    private static class Price implements IPrice, Comparable<Price> {
 
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private long id;
         private int nrOfHistoricalJobs;
         private BigDecimal price;
@@ -76,6 +90,11 @@ public class PriceManagementBean implements IPriceManagementBean {
         @Override
         public void setPrice(BigDecimal price) {
             this.price = price;
+        }
+
+        @Override
+        public int compareTo(Price that) {
+            return nrOfHistoricalJobs - that.nrOfHistoricalJobs;
         }
 
     }
