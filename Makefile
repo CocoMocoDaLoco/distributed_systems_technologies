@@ -12,6 +12,21 @@ nosql:
 nosql-debug:
 	mvn install -Pass1-nosql -e -Dmaven.surefire.debug
 
+deploy:
+	mvn install -Pass2-deploy -e
+
+ejb:
+	mvn install -Pass2-ejb -e
+
+ws:
+	mvn install -Pass2-ws -e
+
+di:
+	mvn install -Pass2-di -e
+
+di-agent:
+	mvn install -Pass2-di-agent -e
+
 protocols:
 	(cd protocols; pdflatex ass1; pdflatex ass1; rm -rf *.aux *.log)
 
