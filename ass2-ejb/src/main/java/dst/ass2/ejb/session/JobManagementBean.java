@@ -2,10 +2,17 @@ package dst.ass2.ejb.session;
 
 import java.util.List;
 
+import javax.ejb.Remote;
+import javax.ejb.Singleton;
+
 import dst.ass2.ejb.dto.AssignmentDTO;
 import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.interfaces.IJobManagementBean;
 
+/* TODO: Other bean type? */
+
+@Remote(IJobManagementBean.class)
+@Singleton
 public class JobManagementBean implements IJobManagementBean {
 
     // TODO
