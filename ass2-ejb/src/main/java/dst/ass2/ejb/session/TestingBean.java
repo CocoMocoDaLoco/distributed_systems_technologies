@@ -8,7 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import dst.ass1.jpa.model.IAddress;
 import dst.ass1.jpa.model.IAdmin;
@@ -26,13 +29,16 @@ import dst.ass1.jpa.model.JobStatus;
 import dst.ass1.jpa.model.ModelFactory;
 import dst.ass2.ejb.session.interfaces.ITestingBean;
 
+@Stateless
+@Remote(ITestingBean.class)
 public class TestingBean implements ITestingBean {
 
+    @PersistenceContext
     private EntityManager em;
 
     @Override
     public void insertTestData() {
-        
+
         ModelFactory modelFactory = new ModelFactory();
 
         System.out.println("Started");
