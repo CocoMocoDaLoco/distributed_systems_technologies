@@ -36,6 +36,11 @@ package: protocols
 clean:
 	mvn clean -Pass1-jpa -e
 	mvn clean -Pass1-nosql -e
+	mvn clean -Pass2-deploy -e
+	mvn clean -Pass2-ejb -e
+	mvn clean -Pass2-ws -e
+	mvn clean -Pass2-di -e
+	mvn clean -Pass2-di-agent -e
 	rm -rf ass1.zip
 
 .PHONY: protocols
