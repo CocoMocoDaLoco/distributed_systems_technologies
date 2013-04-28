@@ -9,13 +9,12 @@ import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Local;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import dst.ass2.ejb.management.interfaces.IPriceManagementBean;
-import dst.ass2.ejb.model.IPrice;
+import dst.ass2.ejb.model.impl.Price;
 
 /* Singleton was chosen because we have a central state
  * which needs to be initialized at startup. Both stateless and stateful
@@ -29,16 +28,15 @@ import dst.ass2.ejb.model.IPrice;
 public class PriceManagementBean implements IPriceManagementBean {
 
     private final ConcurrentSkipListSet<Price> prices = new ConcurrentSkipListSet<Price>();
-    //    private EntityManager entityManager;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @SuppressWarnings("unchecked")
     @PostConstruct
     public void postConstruct() {
-        //        EntityManagerFactory emf = Persistence.createEntityManagerFactory("dst");
-        //        entityManager = emf.createEntityManager();
-        //        Query query = entityManager.createQuery("from " + Price.class.getName());
-        //        prices.addAll(query.getResultList());
-
-        /* TODO */
+        Query query = entityManager.createQuery("from " + Price.class.getName());
+        prices.addAll(query.getResultList());
     }
 
     @Override
@@ -62,7 +60,7 @@ public class PriceManagementBean implements IPriceManagementBean {
 
         prices.add(p);
 
-        /* TODO: Persist. */
+        entityManager.persist(p);
     }
 
 
@@ -70,52 +68,7 @@ public class PriceManagementBean implements IPriceManagementBean {
     public void clearCache() {
         prices.clear();
 
-        /* TODO: Persist. */
-    }
-
-    @Entity
-    private static class Price implements IPrice, Comparable<Price> {
-
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        private long id;
-        private int nrOfHistoricalJobs;
-        private BigDecimal price;
-
-        @Override
-        public Long getId() {
-            return id;
-        }
-
-        @Override
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        @Override
-        public Integer getNrOfHistoricalJobs() {
-            return nrOfHistoricalJobs;
-        }
-
-        @Override
-        public void setNrOfHistoricalJobs(Integer nrOfHistoricalJobs) {
-            this.nrOfHistoricalJobs = nrOfHistoricalJobs;
-        }
-
-        @Override
-        public BigDecimal getPrice() {
-            return price;
-        }
-
-        @Override
-        public void setPrice(BigDecimal price) {
-            this.price = price;
-        }
-
-        @Override
-        public int compareTo(Price that) {
-            return nrOfHistoricalJobs - that.nrOfHistoricalJobs;
-        }
-
+        /* Not sure what this method is supposed to do. Just clear the cache (which we do now),
+         * or also remove entities from the DB? */
     }
 }
