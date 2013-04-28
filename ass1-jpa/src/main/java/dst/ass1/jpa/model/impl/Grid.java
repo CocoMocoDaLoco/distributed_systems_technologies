@@ -32,7 +32,7 @@ public class Grid implements IGrid {
     @ManyToMany(targetEntity = Membership.class)
     private List<IMembership> memberships = new ArrayList<IMembership>();
 
-    @OneToMany(targetEntity = Cluster.class, cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = Cluster.class, cascade = CascadeType.REMOVE, mappedBy = "grid")
     private List<ICluster> clusters = new ArrayList<ICluster>();
 
     @Override
