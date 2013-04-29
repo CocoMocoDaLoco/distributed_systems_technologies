@@ -58,6 +58,10 @@ public class PriceManagementBean implements IPriceManagementBean {
         p.setNrOfHistoricalJobs(nrOfHistoricalJobs);
         p.setPrice(price);
 
+        if (prices.contains(p)) {
+            return;
+        }
+
         prices.add(p);
 
         entityManager.persist(p);
