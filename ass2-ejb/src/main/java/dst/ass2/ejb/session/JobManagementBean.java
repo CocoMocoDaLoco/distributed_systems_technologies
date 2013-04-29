@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import dst.ass1.jpa.model.IComputer;
+import dst.ass1.jpa.model.IExecution;
 import dst.ass1.jpa.model.IUser;
 import dst.ass1.jpa.model.JobStatus;
 import dst.ass1.jpa.model.impl.Environment;
@@ -74,7 +75,17 @@ public class JobManagementBean implements IJobManagementBean {
             List<AssignmentDTO> assignments, Long gridId) {
         Map<Long, IComputer> computersInGrid = new HashMap<Long, IComputer>();
         for (IComputer c : computers) {
-            if (c.getCluster().getGrid().getId().equals(gridId)) {
+            boolean inGrid = c.getCluster().getGrid().getId().equals(gridId);
+
+            boolean isFree = true;
+            for (IExecution e : c.getExecutions()) {
+                if (e.getStatus() != JobStatus.FAILED && e.getStatus() != JobStatus.FINISHED) {
+                    isFree = false;
+                    break;
+                }
+            }
+
+            if (inGrid && isFree) {
                 computersInGrid.put(c.getId(), c);
             }
         }
