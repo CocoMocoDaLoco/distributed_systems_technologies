@@ -77,12 +77,17 @@ public class InjectionController implements IInjectionController {
             throw new InjectionException("Id must be of type Long");
         }
 
+        final boolean wasAccessible = field.isAccessible();
+
         try {
+            field.setAccessible(true);
             field.set(obj, id);
         } catch (IllegalArgumentException e) {
             throw new InjectionException(e);
         } catch (IllegalAccessException e) {
             throw new InjectionException(e);
+        } finally {
+            field.setAccessible(wasAccessible);
         }
     }
 
