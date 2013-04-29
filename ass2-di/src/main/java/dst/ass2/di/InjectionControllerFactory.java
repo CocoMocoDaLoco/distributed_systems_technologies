@@ -1,10 +1,13 @@
 package dst.ass2.di;
 
+import dst.ass2.di.impl.InjectionController;
+
 /**
  * Creates and provides {@link IInjectionController} instances.
  */
 public class InjectionControllerFactory {
 
+    private static IInjectionController instance = null;
 
     /**
      * Returns the singleton {@link IInjectionController} instance.<br/>
@@ -13,8 +16,10 @@ public class InjectionControllerFactory {
      * @return the instance
      */
     public static synchronized IInjectionController getStandAloneInstance() {
-        // TODO
-        return null;
+        if (instance == null) {
+            instance = getNewStandaloneInstance();
+        }
+        return instance;
     }
 
     /**
@@ -35,8 +40,7 @@ public class InjectionControllerFactory {
      * @return the newly created instance
      */
     public static IInjectionController getNewStandaloneInstance() {
-        // TODO
-        return null;
+        return new InjectionController();
     }
 
     /**
