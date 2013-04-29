@@ -72,7 +72,7 @@ public class InjectionController implements IInjectionController {
         return false;
     }
 
-    private void injectId(Long id, Object obj, Field field) {
+    private static void injectId(Long id, Object obj, Field field) {
         if (field.getType() != Long.class) {
             throw new InjectionException("Id must be of type Long");
         }
@@ -102,7 +102,7 @@ public class InjectionController implements IInjectionController {
         }
     }
 
-    private boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
+    private static boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
         boolean idFound = false;
 
         for (Field field : clazz.getDeclaredFields()) {
