@@ -8,6 +8,7 @@ import dst.ass2.di.IInjectionController;
 import dst.ass2.di.InjectionException;
 import dst.ass2.di.annotation.Component;
 import dst.ass2.di.annotation.ComponentId;
+import dst.ass2.di.model.ScopeType;
 
 public class InjectionController implements IInjectionController {
 
@@ -43,7 +44,9 @@ public class InjectionController implements IInjectionController {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getSingletonInstance(Class<T> clazz) throws InjectionException {
-        isComponent(clazz);
+        if (!isComponent(clazz) || !isSingleton(clazz)) {
+            throw new InjectionException("No singleton Component found");
+        }
 
         synchronized(singletons) {
             if (!singletons.containsKey(clazz)) {
@@ -66,6 +69,17 @@ public class InjectionController implements IInjectionController {
         for (Annotation annotation : clazz.getDeclaredAnnotations()) {
             if (annotation.annotationType() == Component.class) {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isSingleton(Class<?> clazz) {
+        for (Annotation annotation : clazz.getDeclaredAnnotations()) {
+            if (annotation.annotationType() == Component.class) {
+                Component c = (Component)annotation;
+                return (c.scope() == ScopeType.SINGLETON);
             }
         }
 
