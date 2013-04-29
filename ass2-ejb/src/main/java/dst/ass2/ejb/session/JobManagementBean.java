@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,6 +24,8 @@ public class JobManagementBean implements IJobManagementBean {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private boolean isLoggedIn = false;
+
     @Override
     public void addJob(Long gridId, Integer numCPUs, String workflow,
             List<String> params) throws AssignmentException {
@@ -33,6 +36,8 @@ public class JobManagementBean implements IJobManagementBean {
     @Override
     public void login(String username, String password)
             throws AssignmentException {
+        isLoggedIn = false;
+
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -51,6 +56,8 @@ public class JobManagementBean implements IJobManagementBean {
         if (count != 1) {
             throw new AssignmentException("Incorrect user or password");
         }
+
+        isLoggedIn = true;
     }
 
     @Override
@@ -60,7 +67,11 @@ public class JobManagementBean implements IJobManagementBean {
 
     @Override
     public void submitAssignments() throws AssignmentException {
-        // TODO
+        if (!isLoggedIn) {
+            throw new AssignmentException("Not logged in");
+        }
+
+        remove();
     }
 
     @Override
@@ -69,4 +80,6 @@ public class JobManagementBean implements IJobManagementBean {
         return null;
     }
 
+    @Remove
+    private void remove() { }
 }
