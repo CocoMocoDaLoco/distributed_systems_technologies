@@ -21,11 +21,24 @@ public class InjectionController implements IInjectionController {
 
     @Override
     public void initialize(Object obj) throws InjectionException {
+        Class<?> clazz = obj.getClass();
+
+        /* The specification is unclear on how to handle singletons in
+         * the inheritance hierarchy. */
+        if (isSingleton(clazz)) {
+            synchronized (singletons) {
+                if (singletons.containsKey(clazz)) {
+                    throw new InjectionException("Duplicate Singleton instance");
+                }
+                singletons.put(clazz, obj);
+            }
+        }
+
         boolean componentFound = false;
         boolean idFound = false;
         final Long id = nextId.getAndIncrement();
 
-        for (Class<?> clazz = obj.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
+        for (clazz = obj.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
             if (!isComponent(clazz)) {
                 continue;
             }
@@ -55,7 +68,6 @@ public class InjectionController implements IInjectionController {
                 try {
                     T instance = clazz.newInstance();
                     initialize(instance);
-                    singletons.put(clazz, instance);
                 } catch (InstantiationException e) {
                     throw new InjectionException(e);
                 } catch (IllegalAccessException e) {
@@ -125,7 +137,7 @@ public class InjectionController implements IInjectionController {
         }
 
         final boolean wasAccessible = field.isAccessible();
-        
+
         try {
             Object inj = null;
             if (isSingleton(type)) {
