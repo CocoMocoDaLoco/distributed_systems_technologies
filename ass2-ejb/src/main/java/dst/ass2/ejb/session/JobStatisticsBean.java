@@ -4,28 +4,43 @@ import java.util.List;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.ws.Action;
+import javax.xml.ws.FaultAction;
+import javax.xml.ws.soap.Addressing;
 
 import dst.ass1.jpa.model.IExecution;
 import dst.ass2.ejb.dto.StatisticsDTO;
+import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.exception.WebServiceException;
 import dst.ass2.ejb.session.interfaces.IJobStatisticsBean;
+import dst.ass2.ejb.ws.Constants;
 import dst.ass2.ejb.ws.IGetStatsRequest;
 import dst.ass2.ejb.ws.IGetStatsResponse;
 import dst.ass2.ejb.ws.impl.GetStatsResponse;
 
 @Remote(IJobStatisticsBean.class)
 @Stateless
+@Addressing
+@WebService(serviceName = Constants.SERVICE_NAME,
+            name = Constants.NAME)
 public class JobStatisticsBean implements IJobStatisticsBean {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public IGetStatsResponse getStatisticsForGrid(
-            IGetStatsRequest request,
-            String name) throws WebServiceException {
+    @Action(input  = "http://localhost:8080/" + Constants.SERVICE_NAME + "/input",
+            output = "http://localhost:8080/" + Constants.SERVICE_NAME + "/output",
+            fault  = { @FaultAction(className = AssignmentException.class, value = "http://localhost:8080/" + Constants.SERVICE_NAME + "/input") })
+    @WebMethod
+    public IGetStatsResponse getStatisticsForGrid (
+            @WebParam IGetStatsRequest request,
+            @WebParam(header = true) String name) throws WebServiceException {
         StatisticsDTO dto = new StatisticsDTO();
         dto.setName(name);
 
