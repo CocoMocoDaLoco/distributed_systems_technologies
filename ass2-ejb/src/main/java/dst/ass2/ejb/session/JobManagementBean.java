@@ -2,6 +2,7 @@ package dst.ass2.ejb.session;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ejb.Remote;
@@ -26,10 +27,17 @@ public class JobManagementBean implements IJobManagementBean {
 
     private boolean isLoggedIn = false;
 
+    List<AssignmentDTO> cache = new LinkedList<AssignmentDTO>();
+
     @Override
     public void addJob(Long gridId, Integer numCPUs, String workflow,
             List<String> params) throws AssignmentException {
-        // TODO
+        List<Long> ids = new LinkedList<Long>();
+
+        AssignmentDTO dto = new AssignmentDTO(gridId, numCPUs, workflow, params, ids);
+        cache.add(dto);
+
+        /* TODO */
     }
 
 
@@ -62,7 +70,11 @@ public class JobManagementBean implements IJobManagementBean {
 
     @Override
     public void removeJobsForGrid(Long gridId) {
-        // TODO
+        for (int i = cache.size() - 1; i >= 0; i--) {
+            if (cache.get(i).getGridId().equals(gridId)) {
+                cache.remove(i);
+            }
+        }
     }
 
     @Override
@@ -71,13 +83,14 @@ public class JobManagementBean implements IJobManagementBean {
             throw new AssignmentException("Not logged in");
         }
 
+        /* TODO */
+
         remove();
     }
 
     @Override
     public List<AssignmentDTO> getCache() {
-        // TODO
-        return null;
+        return cache;
     }
 
     @Remove
