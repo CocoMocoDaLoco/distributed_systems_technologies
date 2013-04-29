@@ -40,10 +40,10 @@ public class JobStatisticsBean implements IJobStatisticsBean {
     @Action(input  = "http://localhost:8080/" + Constants.SERVICE_NAME + "/input",
             output = "http://localhost:8080/" + Constants.SERVICE_NAME + "/output",
             fault  = { @FaultAction(className = AssignmentException.class, value = "http://localhost:8080/" + Constants.SERVICE_NAME + "/input") })
-    @WebMethod
+    @WebMethod(operationName = "getStatisticsForGrid")
     public @XmlJavaTypeAdapter(GetStatsResponseAdapter.class) IGetStatsResponse getStatisticsForGrid (
-            @XmlJavaTypeAdapter(GetStatsRequestAdapter.class) @WebParam IGetStatsRequest request,
-            @WebParam(header = true) String name) throws WebServiceException {
+            @XmlJavaTypeAdapter(GetStatsRequestAdapter.class) @WebParam(partName = "request") IGetStatsRequest request,
+            @WebParam(header = true, partName = "name") String name) throws WebServiceException {
         if (request == null || name == null) {
             throw new WebServiceException("Invalid arguments");
         }
