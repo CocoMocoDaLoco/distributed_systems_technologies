@@ -8,6 +8,7 @@ import dst.ass2.di.IInjectionController;
 import dst.ass2.di.InjectionException;
 import dst.ass2.di.annotation.Component;
 import dst.ass2.di.annotation.ComponentId;
+import dst.ass2.di.annotation.Inject;
 import dst.ass2.di.model.ScopeType;
 
 public class InjectionController implements IInjectionController {
@@ -44,7 +45,7 @@ public class InjectionController implements IInjectionController {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getSingletonInstance(Class<T> clazz) throws InjectionException {
-        if (!isComponent(clazz) || !isSingleton(clazz)) {
+        if (!isSingleton(clazz)) {
             throw new InjectionException("No singleton Component found");
         }
 
@@ -105,6 +106,45 @@ public class InjectionController implements IInjectionController {
         }
     }
 
+    private void inject(Object obj, Field field, Inject annotation) {
+        final boolean required = annotation.required();
+        final Exception e = tryInject(obj, field, annotation);
+
+        if (e != null && required) {
+            throw new InjectionException(e);
+        }
+    }
+
+    private Exception tryInject(Object obj, Field field, Inject annotation) {
+        final Class<?> type = (annotation.specificType() == Void.class) ?
+                field.getType() : annotation.specificType();
+
+        if (!isComponent(type)) {
+            return new InjectionException("No Component found");
+        }
+
+        final boolean wasAccessible = field.isAccessible();
+        
+        try {
+            Object inj = null;
+            if (isSingleton(type)) {
+                inj = getSingletonInstance(type);
+            } else {
+                inj = type.newInstance();
+                initialize(inj);
+            }
+
+            field.setAccessible(true);
+            field.set(obj, inj);
+        } catch (Exception e) {
+            return e;
+        } finally {
+            field.setAccessible(wasAccessible);
+        }
+
+        return null;
+    }
+
     private Long getAndIncrementId(Class<?> clazz) {
         synchronized (ids) {
             Long id = ids.get(clazz);
@@ -116,16 +156,17 @@ public class InjectionController implements IInjectionController {
         }
     }
 
-    private static boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
+    private boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
         boolean idFound = false;
 
         for (Field field : clazz.getDeclaredFields()) {
-            final String fname = field.getName();
-
             for (Annotation annotation : field.getDeclaredAnnotations()) {
-                if (annotation.annotationType() == ComponentId.class) {
+                final Class<?> annotationType = annotation.annotationType();
+                if (annotationType == ComponentId.class) {
                     injectId(id, obj, field);
                     idFound = true;
+                } else if (annotationType == Inject.class) {
+                    inject(obj, field, (Inject)annotation);
                 }
             }
         }
