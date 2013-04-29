@@ -18,13 +18,22 @@ public class InjectionController implements IInjectionController {
 
     @Override
     public void initialize(Object obj) throws InjectionException {
-        final Class<?> clazz = obj.getClass();
-        assertComponent(clazz);
-
+        boolean componentFound = false;
         boolean idFound = false;
-        final Long id = getAndIncrementId(clazz);
+        final Long id = getAndIncrementId(obj.getClass());
 
-        idFound |= initializeClass(obj, clazz, id);
+        for (Class<?> clazz = obj.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
+            if (!isComponent(clazz)) {
+                continue;
+            }
+
+            componentFound = true;
+            idFound |= initializeClass(obj, clazz, id);
+        }
+
+        if (!componentFound) {
+            throw new InjectionException("No Component found");
+        }
 
         if (!idFound) {
             throw new InjectionException("No ComponentId found");
@@ -34,7 +43,7 @@ public class InjectionController implements IInjectionController {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getSingletonInstance(Class<T> clazz) throws InjectionException {
-        assertComponent(clazz);
+        isComponent(clazz);
 
         synchronized(singletons) {
             if (!singletons.containsKey(clazz)) {
@@ -53,14 +62,14 @@ public class InjectionController implements IInjectionController {
         }
     }
 
-    private static void assertComponent(Class<?> clazz) {
+    private static boolean isComponent(Class<?> clazz) {
         for (Annotation annotation : clazz.getDeclaredAnnotations()) {
             if (annotation.annotationType() == Component.class) {
-                return;
+                return true;
             }
         }
 
-        throw new InjectionException("Not a component");
+        return false;
     }
 
     private void injectId(Long id, Object obj, Field field) {
