@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.ejb.Remote;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
+import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -24,6 +25,7 @@ import dst.ass1.jpa.model.impl.Environment;
 import dst.ass1.jpa.model.impl.Execution;
 import dst.ass1.jpa.model.impl.Job;
 import dst.ass2.ejb.dto.AssignmentDTO;
+import dst.ass2.ejb.interceptor.AuditInterceptor;
 import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.exception.CapacityExceededException;
 import dst.ass2.ejb.session.interfaces.IJobManagementBean;
@@ -32,6 +34,7 @@ import dst.ass2.ejb.session.interfaces.IJobManagementBean;
 
 @Remote(IJobManagementBean.class)
 @Stateful
+@Interceptors({AuditInterceptor.class})
 public class JobManagementBean implements IJobManagementBean {
 
     @PersistenceContext
