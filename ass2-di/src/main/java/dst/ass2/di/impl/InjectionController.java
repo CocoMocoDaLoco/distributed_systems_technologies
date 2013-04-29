@@ -24,16 +24,7 @@ public class InjectionController implements IInjectionController {
         boolean idFound = false;
         final Long id = getAndIncrementId(clazz);
 
-        for (Field field : clazz.getDeclaredFields()) {
-            final String fname = field.getName();
-
-            for (Annotation annotation : field.getDeclaredAnnotations()) {
-                if (annotation.annotationType() == ComponentId.class) {
-                    injectId(id, obj, field);
-                    idFound = true;
-                }
-            }
-        }
+        idFound |= initializeClass(obj, clazz, id);
 
         if (!idFound) {
             throw new InjectionException("No ComponentId found");
@@ -95,6 +86,23 @@ public class InjectionController implements IInjectionController {
             ids.put(clazz, id + 1);
             return id;
         }
+    }
+
+    private boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
+        boolean idFound = false;
+
+        for (Field field : clazz.getDeclaredFields()) {
+            final String fname = field.getName();
+
+            for (Annotation annotation : field.getDeclaredAnnotations()) {
+                if (annotation.annotationType() == ComponentId.class) {
+                    injectId(id, obj, field);
+                    idFound = true;
+                }
+            }
+        }
+
+        return idFound;
     }
 
 }
