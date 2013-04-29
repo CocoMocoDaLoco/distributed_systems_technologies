@@ -3,6 +3,7 @@ package dst.ass2.di.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import dst.ass2.di.IInjectionController;
 import dst.ass2.di.InjectionException;
@@ -16,13 +17,13 @@ public class InjectionController implements IInjectionController {
     private final HashMap<Class<?>, Object> singletons =
             new HashMap<Class<?>, Object>();
 
-    private final HashMap<Class<?>, Long> ids = new HashMap<Class<?>, Long>();
+    private final AtomicLong nextId = new AtomicLong(0L);
 
     @Override
     public void initialize(Object obj) throws InjectionException {
         boolean componentFound = false;
         boolean idFound = false;
-        final Long id = getAndIncrementId(obj.getClass());
+        final Long id = nextId.getAndIncrement();
 
         for (Class<?> clazz = obj.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
             if (!isComponent(clazz)) {
@@ -143,17 +144,6 @@ public class InjectionController implements IInjectionController {
         }
 
         return null;
-    }
-
-    private Long getAndIncrementId(Class<?> clazz) {
-        synchronized (ids) {
-            Long id = ids.get(clazz);
-            if (id == null) {
-                id = 0L;
-            }
-            ids.put(clazz, id + 1);
-            return id;
-        }
     }
 
     private boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
