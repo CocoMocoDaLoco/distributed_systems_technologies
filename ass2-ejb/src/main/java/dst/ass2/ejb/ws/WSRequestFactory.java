@@ -1,6 +1,6 @@
 package dst.ass2.ejb.ws;
 
-import dst.ass2.ejb.ws.IGetStatsRequest;
+import dst.ass2.ejb.ws.impl.GetStatsRequest;
 
 /**
  * Factory used to instantiate Web service request objects.
@@ -12,8 +12,7 @@ public class WSRequestFactory {
      * @return
      */
     public IGetStatsRequest createGetStatsRequest() {
-        // TODO
-        return null;
+        return new GetStatsRequest();
     }
 
 }
