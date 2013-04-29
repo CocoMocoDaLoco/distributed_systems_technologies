@@ -19,6 +19,7 @@ import dst.ass2.ejb.dto.AuditLogDTO;
 import dst.ass2.ejb.dto.BillDTO;
 import dst.ass2.ejb.management.PriceManagementBean;
 import dst.ass2.ejb.management.interfaces.IPriceManagementBean;
+import dst.ass2.ejb.model.IAuditLog;
 import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.interfaces.IGeneralManagementBean;
 import dst.ass2.ejb.util.EJBUtils;
@@ -62,8 +63,14 @@ public class GeneralManagementBean implements IGeneralManagementBean {
 
     @Override
     public List<AuditLogDTO> getAuditLogs() {
-        // TODO
-        return null;
+        List<AuditLogDTO> out = new LinkedList<AuditLogDTO>();
+
+        List<IAuditLog> logs = entityManager.createQuery("from AuditLog", IAuditLog.class).getResultList();
+        for (IAuditLog log : logs) {
+            out.add(new AuditLogDTO(log));
+        }
+
+        return out;
     }
 
     @Override

@@ -3,10 +3,12 @@ package dst.ass2.ejb.model.impl;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import dst.ass2.ejb.model.IAuditLog;
 import dst.ass2.ejb.model.IAuditParameter;
@@ -19,6 +21,8 @@ public class AuditLog implements IAuditLog {
     private Long id;
     private String method;
     private Date invocationTime;
+
+    @OneToMany(targetEntity = AuditParameter.class, cascade = CascadeType.ALL, mappedBy = "auditLog")
     private List<IAuditParameter> parameters;
     private String result;
 
