@@ -39,12 +39,19 @@ public class AuditInterceptor {
         }
         log.setParameters(parameters);
 
-        final Object result = ctx.proceed();
-        log.setResult(result == null ? "null" : result.toString());
+        Object result = null;
+        try {
+            result = ctx.proceed();
+            log.setResult(result == null ? "null" : result.toString());
 
-        entityManager.persist(log);
-
-        return result;
+            return result;
+        } catch (Exception e) {
+            log.setResult(e.toString());
+            throw e;
+        } finally {
+            entityManager.persist(log);
+            entityManager.flush();
+        }
     }
 
 }
