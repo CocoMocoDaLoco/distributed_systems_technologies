@@ -3,6 +3,7 @@ package dst.ass2.ejb.session;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,9 +14,14 @@ import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import dst.ass1.jpa.model.IComputer;
+import dst.ass1.jpa.model.IUser;
+import dst.ass1.jpa.model.JobStatus;
+import dst.ass1.jpa.model.impl.Environment;
+import dst.ass1.jpa.model.impl.Execution;
+import dst.ass1.jpa.model.impl.Job;
 import dst.ass2.ejb.dto.AssignmentDTO;
 import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.exception.CapacityExceededException;
@@ -31,14 +37,14 @@ public class JobManagementBean implements IJobManagementBean {
     private EntityManager entityManager;
 
     private boolean isLoggedIn = false;
+    private String username = null;
 
     List<AssignmentDTO> cache = new LinkedList<AssignmentDTO>();
 
     @Override
     public void addJob(Long gridId, Integer numCPUs, String workflow,
             List<String> params) throws AssignmentException {
-        Query q = entityManager.createQuery("from Computer");
-        @SuppressWarnings("unchecked")
+        TypedQuery<IComputer> q = entityManager.createQuery("from Computer", IComputer.class);
         List<IComputer> computers = q.getResultList();
 
         if (exceedsCapacity(computers, cache, gridId, numCPUs)) {
@@ -106,6 +112,7 @@ public class JobManagementBean implements IJobManagementBean {
     public void login(String username, String password)
             throws AssignmentException {
         isLoggedIn = false;
+        this.username = null;
 
         MessageDigest md = null;
         try {
@@ -115,8 +122,8 @@ public class JobManagementBean implements IJobManagementBean {
         }
         byte[] b = md.digest(password.getBytes());
 
-        Query q = entityManager.createQuery("from User " +
-                "where username = :username and password = :password");
+        TypedQuery<IUser> q = entityManager.createQuery("from User " +
+                "where username = :username and password = :password", IUser.class);
         q.setParameter("username", username);
         q.setParameter("password", b);
 
@@ -127,6 +134,7 @@ public class JobManagementBean implements IJobManagementBean {
         }
 
         isLoggedIn = true;
+        this.username = q.getSingleResult().getUsername();
     }
 
     @Override
@@ -144,9 +152,61 @@ public class JobManagementBean implements IJobManagementBean {
             throw new AssignmentException("Not logged in");
         }
 
-        /* TODO */
+        TypedQuery<IComputer> q = entityManager.createQuery("from Computer", IComputer.class);
+        List<IComputer> computers = q.getResultList();
+
+        Map<Long, IComputer> computerMap = new HashMap<Long, IComputer>();
+        for (IComputer c : computers) {
+            computerMap.put(c.getId(), c);
+        }
+
+        if (!isValidAssignment(cache, computers)) {
+            throw new AssignmentException("Assignment is invalid");
+        }
+
+        for (AssignmentDTO dto : cache) {
+            persist(computerMap, dto);
+        }
 
         remove();
+    }
+
+    private void persist(Map<Long, IComputer> computerMap, AssignmentDTO dto) {
+        final Date now = new Date();
+
+        IUser user = entityManager.createQuery("from User where username = :username", IUser.class)
+                .setParameter("username", username)
+                .getSingleResult();
+
+        Environment environment = new Environment();
+        Job job = new Job();
+        Execution execution = new Execution();
+        List<IComputer> computers = new LinkedList<IComputer>();
+
+        for (long id : dto.getComputerIds()) {
+            computers.add(computerMap.get(id));
+        }
+
+        environment.setParams(dto.getParams());
+        environment.setWorkflow(dto.getWorkflow());
+
+        job.setEnvironment(environment);
+        job.setExecution(execution);
+        job.setUser(user);
+        job.setNumCPUs(dto.getNumCPUs());
+        job.setPaid(false);
+
+        execution.setComputers(computers);
+        execution.setStart(now);
+        execution.setJob(job);
+        execution.setStatus(JobStatus.SCHEDULED);
+
+        entityManager.persist(job);
+    }
+
+    private boolean isValidAssignment(List<AssignmentDTO> assignment, List<IComputer> computers) {
+        // TODO Auto-generated method stub
+        return true;
     }
 
     @Override
