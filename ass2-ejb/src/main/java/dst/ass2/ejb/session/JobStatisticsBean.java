@@ -9,6 +9,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.Action;
 import javax.xml.ws.FaultAction;
 import javax.xml.ws.soap.Addressing;
@@ -21,7 +22,9 @@ import dst.ass2.ejb.session.interfaces.IJobStatisticsBean;
 import dst.ass2.ejb.ws.Constants;
 import dst.ass2.ejb.ws.IGetStatsRequest;
 import dst.ass2.ejb.ws.IGetStatsResponse;
+import dst.ass2.ejb.ws.impl.GetStatsRequestAdapter;
 import dst.ass2.ejb.ws.impl.GetStatsResponse;
+import dst.ass2.ejb.ws.impl.GetStatsResponseAdapter;
 
 @Remote(IJobStatisticsBean.class)
 @Stateless
@@ -38,8 +41,8 @@ public class JobStatisticsBean implements IJobStatisticsBean {
             output = "http://localhost:8080/" + Constants.SERVICE_NAME + "/output",
             fault  = { @FaultAction(className = AssignmentException.class, value = "http://localhost:8080/" + Constants.SERVICE_NAME + "/input") })
     @WebMethod
-    public IGetStatsResponse getStatisticsForGrid (
-            @WebParam IGetStatsRequest request,
+    public @XmlJavaTypeAdapter(GetStatsResponseAdapter.class) IGetStatsResponse getStatisticsForGrid (
+            @XmlJavaTypeAdapter(GetStatsRequestAdapter.class) @WebParam IGetStatsRequest request,
             @WebParam(header = true) String name) throws WebServiceException {
         StatisticsDTO dto = new StatisticsDTO();
         dto.setName(name);
