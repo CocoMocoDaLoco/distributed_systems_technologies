@@ -1,0 +1,70 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{comment}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{Gray}{gray}{0.5}
+
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{OliveGreen},
+    commentstyle=\color{Gray},
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    showspaces=false,
+    showtabs=false,
+    numbers=left,
+}
+
+\title{VU Distributed Systems Technologies \\
+       SS 2013 \\
+       Assignment 2}
+\author{Jakob Gruber, 0203440}
+
+\begin{document}
+
+\maketitle
+
+\section{Notes}
+
+\subsection{EJB and SOAP Internals}
+
+\begin{comment}
+Study EJB and SOAP network traffic, discuss these in some detail.
+\end{comment}
+
+
+\section{Theory}
+
+\subsection{EJB Lifecycles (1 Point)}
+
+\emph{
+Explain the lifecycle of each bean type defined in the EJB 3.1 specification. What optimizations can the
+EJB container perform for the respective type? Also think about typical use cases the respective bean
+type provides to the developer.}
+
+\subsection{Dependency Injection (2 Points)}
+
+\emph{
+Explain the way dependency injection is performed by the EJB container. What kind of resources may
+be injected into a bean, and what are the different annotations that can be used?}
+
+\subsection{Java Transaction API (2 Points)}
+
+\emph{
+The EJB architecture provides a mechanism for distributed transactions. Explain the two ways how
+transactions can be defined. How is the concept of distributed transactions accomplished behind the
+scenes, i.e. what tasks have to be performed by the EJB container?}
+
+\subsection{Remoting Technologies (1 Point)}
+
+\emph{Compare EJB remoting and Web services. When would you use one technology, and when the other? Is
+one of them strictly superior? How do these technologies relate to other remoting technologies that you
+might know from other lectures (for instance, Java RMI, CORBA, or even socket programming)?}
+
+\end{document}
