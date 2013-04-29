@@ -200,6 +200,7 @@ public class JDBCTestUtil {
 
     public void removeAllJobs_FROM_DB() {
         truncateTable_IN_DB(SQL_JOB_TABLE_NAME);
+        truncateTable_IN_DB("Execution");
     }
 
     private void truncateTable_IN_DB(String table) {
