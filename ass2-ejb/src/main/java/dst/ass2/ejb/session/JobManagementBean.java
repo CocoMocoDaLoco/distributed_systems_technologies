@@ -147,6 +147,7 @@ public class JobManagementBean implements IJobManagementBean {
     }
 
     @Override
+    @Remove(retainIfException = true)
     public void submitAssignments() throws AssignmentException {
         if (!isLoggedIn) {
             throw new AssignmentException("Not logged in");
@@ -168,7 +169,7 @@ public class JobManagementBean implements IJobManagementBean {
             persist(computerMap, dto);
         }
 
-        remove();
+        entityManager.flush();
     }
 
     private void persist(Map<Long, IComputer> computerMap, AssignmentDTO dto) {
@@ -213,7 +214,4 @@ public class JobManagementBean implements IJobManagementBean {
     public List<AssignmentDTO> getCache() {
         return cache;
     }
-
-    @Remove
-    private void remove() { }
 }
