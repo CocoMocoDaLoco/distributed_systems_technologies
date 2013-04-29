@@ -27,7 +27,6 @@ import dst.ass1.jpa.model.impl.Job;
 import dst.ass2.ejb.dto.AssignmentDTO;
 import dst.ass2.ejb.interceptor.AuditInterceptor;
 import dst.ass2.ejb.session.exception.AssignmentException;
-import dst.ass2.ejb.session.exception.CapacityExceededException;
 import dst.ass2.ejb.session.interfaces.IJobManagementBean;
 
 /* Stateful, because state is unique to a client/bean session. */
@@ -52,7 +51,9 @@ public class JobManagementBean implements IJobManagementBean {
         List<IComputer> computers = q.getResultList();
 
         if (exceedsCapacity(computers, cache, gridId, numCPUs)) {
-            throw new CapacityExceededException();
+            /* Interestingly, the assignment first tells us to use a custom exception, and
+             * the tests using startsWith("AssignmentException"). */
+            throw new AssignmentException("Capacity exceeded");
         }
 
         List<Long> ids = schedule(computers, cache, gridId, numCPUs);
