@@ -44,6 +44,10 @@ public class JobStatisticsBean implements IJobStatisticsBean {
     public @XmlJavaTypeAdapter(GetStatsResponseAdapter.class) IGetStatsResponse getStatisticsForGrid (
             @XmlJavaTypeAdapter(GetStatsRequestAdapter.class) @WebParam IGetStatsRequest request,
             @WebParam(header = true) String name) throws WebServiceException {
+        if (request == null || name == null) {
+            throw new WebServiceException("Invalid arguments");
+        }
+
         StatisticsDTO dto = new StatisticsDTO();
         dto.setName(name);
 
