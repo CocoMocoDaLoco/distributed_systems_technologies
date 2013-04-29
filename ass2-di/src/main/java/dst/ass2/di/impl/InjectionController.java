@@ -7,6 +7,7 @@ import java.util.HashMap;
 import dst.ass2.di.IInjectionController;
 import dst.ass2.di.InjectionException;
 import dst.ass2.di.annotation.Component;
+import dst.ass2.di.annotation.ComponentId;
 
 public class InjectionController implements IInjectionController {
 
@@ -18,6 +19,22 @@ public class InjectionController implements IInjectionController {
         final Class<?> clazz = obj.getClass();
         assertComponent(clazz);
 
+        boolean idFound = false;
+
+        for (Field field : clazz.getDeclaredFields()) {
+            final String fname = field.getName();
+
+            for (Annotation annotation : field.getDeclaredAnnotations()) {
+                if (annotation.annotationType() == ComponentId.class) {
+                    injectId(obj, field);
+                    idFound = true;
+                }
+            }
+        }
+
+        if (!idFound) {
+            throw new InjectionException("No ComponentId found");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -50,6 +67,12 @@ public class InjectionController implements IInjectionController {
         }
 
         throw new InjectionException("Not a component");
+    }
+
+    private void injectId(Object obj, Field field) {
+        if (field.getType() != Long.class) {
+            throw new InjectionException("Id must be of type Long");
+        }
     }
 
 }
