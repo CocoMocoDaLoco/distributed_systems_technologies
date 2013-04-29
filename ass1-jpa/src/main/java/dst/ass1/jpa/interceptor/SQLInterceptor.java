@@ -14,7 +14,6 @@ public class SQLInterceptor extends EmptyInterceptor {
     @Override
     public String onPrepareStatement(String sql) {
         if (Pattern.matches("select [ a-zA-Z0-9._,]+ from .*(Computer|Execution).*", sql)) {
-            System.out.printf("%s: Found select statement%n", SQLInterceptor.class.getName());
             synchronized (gate) {
                 selectCount++;
             }

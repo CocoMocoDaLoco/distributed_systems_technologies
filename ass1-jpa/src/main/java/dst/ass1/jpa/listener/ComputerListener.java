@@ -14,14 +14,12 @@ public class ComputerListener {
         final Date now = new Date();
         computer.setCreation(now);
         computer.setLastUpdate(now);
-        System.out.printf("%s: onPrePersist%n", ComputerListener.class.getName());
     }
 
     @PreUpdate
     public void onPreUpdate(Computer computer) {
         final Date now = new Date();
         computer.setLastUpdate(now);
-        System.out.printf("%s: onPreUpdatet%n", ComputerListener.class.getName());
     }
 
 }
