@@ -15,6 +15,7 @@ import javax.xml.ws.FaultAction;
 import javax.xml.ws.soap.Addressing;
 
 import dst.ass1.jpa.model.IExecution;
+import dst.ass1.jpa.model.IGrid;
 import dst.ass2.ejb.dto.StatisticsDTO;
 import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.exception.WebServiceException;
@@ -46,6 +47,17 @@ public class JobStatisticsBean implements IJobStatisticsBean {
             @WebParam(header = true, partName = "name") String name) throws WebServiceException {
         if (request == null || name == null) {
             throw new WebServiceException("Invalid arguments");
+        }
+
+        /* TODO: "A SOAP fault of type UnknownGridFault" */
+
+        final boolean gridExists = entityManager
+                .createQuery("from Grid g where g.name = :gridname", IGrid.class)
+                .setParameter("gridname", name)
+                .getResultList()
+                .size() > 0;
+        if (!gridExists) {
+            throw new WebServiceException("UnknownGridFault");
         }
 
         StatisticsDTO dto = new StatisticsDTO();
