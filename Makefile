@@ -35,7 +35,7 @@ protocols:
 	(cd protocols; pdflatex ass2; pdflatex ass2; rm -rf *.aux *.log)
 
 package: protocols
-	find -L \( ! -regex '^.*/target/.*' -a ! -regex '^./.git/.*' \) | zip ass1.zip -@
+	find -L \( ! -regex '^.*/target/.*' -a ! -regex '^./.git/.*' \) | zip ass2.zip -@
 
 clean:
 	mvn clean -Pass1-jpa -e
