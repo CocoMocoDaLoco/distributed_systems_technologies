@@ -48,8 +48,28 @@ Study EJB and SOAP network traffic, discuss these in some detail.
 
 \subsection{Transparent Injection}
 
-% End-to-end process of injection. javaagent:..., Premain-Class, ClassFileTransformer,
-% bytecode manipulation (javassist)
+Java allows instrumentation using so-called agents, which are deployed as JAR files.
+A command-line parameter called \verb|javaagent| points to the JAR file containing the agent, while
+a parameter called \verb|Premain-Class| specifies which class to run to initialize the agent.
+
+The \lstinline|premain()| method is executed by the JVM before the \lstinline|main()|
+method of the actual program; within \lstinline|premain()|, the agent can hook itself
+into the JVM systems as required. In this assignment, we registered an implementation
+of the \lstinline|ClassFileTransformer| class, which is called whenever a new class
+definition is loaded.
+
+A \lstinline|ClassFileTransformer| can inspect and modify the entire definition of
+a class before it is used by the actual program. We use this functionality to
+inject a short code snippet into each constructor of each class annotated with \lstinline|@Component|,
+which calls into \lstinline|IInjectionController.initialize()| to initialize itself
+automatically.
+
+This is accomplished using \verb|javassist|, a library for Java bytecode manipulation.
+For each relevant class constructor, \verb|javassist| compiles our short source
+code snippet into bytecode, and inserts it at the end of the constructor.
+
+The modified bytecode is then returned by the \lstinline|ClassFileTransformer| and
+used by the application.
 
 
 \section{Theory}
