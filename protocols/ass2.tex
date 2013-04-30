@@ -168,6 +168,24 @@ For further elaboration, see section \ref{sec:beans}.
 Explain the way dependency injection is performed by the EJB container. What kind of resources may
 be injected into a bean, and what are the different annotations that can be used?}
 
+\vspace{3mm}
+
+% TODO
+
+The following resources can be injected into beans: almost any Java class, session beans, 
+Java EE resources, persistence contexts, producer fields, objects returned by producer methods,
+web service references, remote beans references.
+
+Usable annotations are:
+
+\begin{itemize}
+    \item \lstinline|Resource|: Resources such as data sources
+    \item \lstinline|EJB|: Session EJB, Web beans
+    \item \lstinline|WebServiceRef|: Web service references
+    \item \lstinline|PersistenceContext|: Container-managed \lstinline|EntityManager|
+    \item \lstinline|PersistenceUnit|: Container-managed \lstinline|EntityManagerFactory|
+\end{itemize}
+
 \subsection{Java Transaction API (2 Points)}
 
 \emph{
@@ -175,10 +193,14 @@ The EJB architecture provides a mechanism for distributed transactions. Explain 
 transactions can be defined. How is the concept of distributed transactions accomplished behind the
 scenes, i.e. what tasks have to be performed by the EJB container?}
 
+\vspace{3mm}
+
 \subsection{Remoting Technologies (1 Point)}
 
 \emph{Compare EJB remoting and Web services. When would you use one technology, and when the other? Is
 one of them strictly superior? How do these technologies relate to other remoting technologies that you
 might know from other lectures (for instance, Java RMI, CORBA, or even socket programming)?}
+
+\vspace{3mm}
 
 \end{document}
