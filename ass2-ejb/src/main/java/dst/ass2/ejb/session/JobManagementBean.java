@@ -200,8 +200,13 @@ public class JobManagementBean implements IJobManagementBean {
         List<IComputer> computers = new LinkedList<IComputer>();
 
         for (long id : dto.getComputerIds()) {
-            computers.add(computerMap.get(id));
+            final IComputer c = computerMap.get(id);
+
+            c.addExecution(execution);
+            computers.add(c);
         }
+
+        user.addJob(job);
 
         environment.setParams(dto.getParams());
         environment.setWorkflow(dto.getWorkflow());
