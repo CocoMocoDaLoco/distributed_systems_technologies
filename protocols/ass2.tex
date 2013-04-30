@@ -195,6 +195,25 @@ scenes, i.e. what tasks have to be performed by the EJB container?}
 
 \vspace{3mm}
 
+Transactions may be either container-managed, or user-managed. It is not necessary to explicitly 
+state start- and endpoints of container-managed transactions. Instead, transactions start
+before the beginning of a method, and end just before it completes. Each method can
+be associated with a specific transaction attribute from: \lstinline|Required, RequiresNew, Mandatory, NotSupported, Supports, Never|.
+These specify what how to handle method calls from within an existing transaction context.
+
+A container-managed transaction is automatically rolled back on a thrown system exception.
+Likewise, a rollback can be initiated by calling \lstinline|EJBContext.setRollbackOnly()|.
+
+Bean-managed (or user-managed) transactions must explicitly mark start- and endpoints.
+While this requires more code, it also allows for more flexibility since methods can now
+be associated with more than one transaction.
+
+Distributed transactions are handled by passing responsibilities to one or more transaction
+managers. Commits are handled using the two-phase commit: first, the manager tells each
+transaction branch to verify if it can still commit, and only if a commit is possible
+for each branch is the transaction actually committed. Otherwise a rollback instructions
+is sent to all branches.
+
 \subsection{Remoting Technologies (1 Point)}
 
 \emph{Compare EJB remoting and Web services. When would you use one technology, and when the other? Is
