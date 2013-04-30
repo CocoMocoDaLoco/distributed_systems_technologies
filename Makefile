@@ -32,6 +32,7 @@ di-agent-debug:
 
 protocols:
 	(cd protocols; pdflatex ass1; pdflatex ass1; rm -rf *.aux *.log)
+	(cd protocols; pdflatex ass2; pdflatex ass2; rm -rf *.aux *.log)
 
 package: protocols
 	find -L \( ! -regex '^.*/target/.*' -a ! -regex '^./.git/.*' \) | zip ass1.zip -@
