@@ -60,9 +60,10 @@ public class InjectorAgent implements ClassFileTransformer {
         final CtConstructor[] ctors = cc.getConstructors();
         for (CtConstructor ctor : ctors) {
             try {
-                ctor.insertBefore(String.format("System.out.println(\"Hello World: %s\");", className));
+                ctor.insertAfter("dst.ass2.di.InjectionControllerFactory.getTransparentInstance().initialize(this);");
             } catch (CannotCompileException e) {
                 e.printStackTrace();
+                return classfileBuffer;
             }
         }
 

@@ -1,6 +1,7 @@
 package dst.ass2.di;
 
 import dst.ass2.di.impl.InjectionController;
+import dst.ass2.di.impl.TransparentInjectionController;
 
 /**
  * Creates and provides {@link IInjectionController} instances.
@@ -8,6 +9,7 @@ import dst.ass2.di.impl.InjectionController;
 public class InjectionControllerFactory {
 
     private static IInjectionController instance = null;
+    private static IInjectionController transparentInstance = null;
 
     /**
      * Returns the singleton {@link IInjectionController} instance.<br/>
@@ -30,8 +32,10 @@ public class InjectionControllerFactory {
      * @return the instance
      */
     public static synchronized IInjectionController getTransparentInstance() {
-        // TODO
-        return null;
+        if (transparentInstance == null) {
+            transparentInstance = getNewTransparentInstance();
+        }
+        return transparentInstance;
     }
 
     /**
@@ -50,7 +54,6 @@ public class InjectionControllerFactory {
      * @return the instance
      */
     public static IInjectionController getNewTransparentInstance() {
-        // TODO
-        return null;
+        return new TransparentInjectionController();
     }
 }
