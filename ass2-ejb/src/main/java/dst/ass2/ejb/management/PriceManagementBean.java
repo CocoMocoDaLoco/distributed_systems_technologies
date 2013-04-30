@@ -44,7 +44,7 @@ public class PriceManagementBean implements IPriceManagementBean {
         Price that = new Price();
         that.setNrOfHistoricalJobs(nrOfHistoricalJobs);
 
-        Price price = prices.higher(that);
+        Price price = prices.ceiling(that);
         if (price == null) {
             return new BigDecimal(0);
         }
