@@ -38,7 +38,7 @@
 
 \section{Notes}
 
-\subsection{Bean types}
+\subsection{Bean types} \label{sec:beans}
 
 There are two types of enterprise beans: \emph{Session}, which perform a task for
 a client or may implement a web service; and \emph{Message-driven}, which acts
@@ -128,6 +128,39 @@ used by the application.
 Explain the lifecycle of each bean type defined in the EJB 3.1 specification. What optimizations can the
 EJB container perform for the respective type? Also think about typical use cases the respective bean
 type provides to the developer.}
+
+\vspace{3mm}
+
+\emph{Stateful.} When the client obtains a reference to a stateful bean, it is first
+initialized by the server: dependencies are injected, and any \lstinline|@PostConstruct| methods
+are called. Once this completes, the bean is ready to be used.
+
+At any time, the server may decide to passivate the bean; when entering this stage,
+\lstinline|@PrePassivate| methods are called, and when exiting it \lstinline|@PostActivate| methods
+are called.
+
+Once the client has finished using the bean, a method annotated \lstinline|@Remove| is called.
+Upon completion, \lstinline|@PreDestroy| methods are executed and the bean may be garbage collected by the server.
+
+\vspace{3mm}
+
+\emph{Stateless.} A stateless bean is either nonexistent, or ready to be used. Typically, the server
+creates a pool of stateless beans. Again, any methods annotated with \lstinline|@PostConstruct| are
+called and at the end of its lifecycle, \lstinline|@PreDestroy| methods are executed.
+
+\vspace{3mm}
+
+\emph{Singleton.} The lifecycle of a singleton bean is similar to that of a stateless bean, except
+that only exists once instead of several times in a pool. If it is annotated \lstinline|@Startup|,
+the bean is constructed as soon as the server starts up.
+
+\vspace{3mm}
+
+\emph{Message-Driven.} Similar to a stateless bean.
+
+\vspace{3mm}
+
+For further elaboration, see section \ref{sec:beans}.
 
 \subsection{Dependency Injection (2 Points)}
 
