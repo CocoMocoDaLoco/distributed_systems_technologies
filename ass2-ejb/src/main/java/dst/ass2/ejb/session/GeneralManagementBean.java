@@ -94,7 +94,6 @@ public class GeneralManagementBean implements IGeneralManagementBean {
     private void billJob(int paidJobs, BillDTO bill, IJob job, IUser user) throws AssignmentException {
         final List<IComputer> computers = job.getExecution().getComputers();
         if (computers.isEmpty()) {
-            System.out.printf("Job not assigned to any computers%n");
             throw new AssignmentException("Job not assigned to any computers");
         }
 
@@ -102,10 +101,10 @@ public class GeneralManagementBean implements IGeneralManagementBean {
 
         List<IMembership> memberships = entityManager
                 .createQuery("select m from User u join u.memberships m join m.grid g " +
-                        "where u.username = :username and g.id = :gridid", IMembership.class)
-                        .setParameter("username", user.getUsername())
-                        .setParameter("gridid", grid.getId())
-                        .getResultList();
+                             "where u.username = :username and g.id = :gridid", IMembership.class)
+                .setParameter("username", user.getUsername())
+                .setParameter("gridid", grid.getId())
+                .getResultList();
 
         final BigDecimal discount = (memberships.size() > 0) ? new BigDecimal(memberships.get(0).getDiscount()) : new BigDecimal(0);
         final BigDecimal fraction = new BigDecimal(1).subtract(discount);
