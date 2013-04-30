@@ -40,6 +40,54 @@
 
 \subsection{Bean types}
 
+There are two types of enterprise beans: \emph{Session}, which perform a task for
+a client or may implement a web service; and \emph{Message-driven}, which acts
+as a listener for a messaging type.
+
+In this assignment, we only used \emph{Session} beans. These can be further divided
+into:
+
+\emph{Stateful}. This bean type has an internal state represented by its instance variables.
+It is not shared between clients, and only exists within the scope of a client
+conversation. When the session ends, the bean is removed. Stateful beans may not implement
+a web service.
+
+Appropriate, if: 
+
+\begin{itemize}
+    \item The bean’s state represents the interaction between the bean and a specific client.
+    \item The bean needs to hold information about the client across method invocations.
+    \item The bean mediates between the client and the other components of the application, presenting a simplified view to the client.
+    \item Behind the scenes, the bean manages the work flow of several enterprise beans.
+\end{itemize}
+
+\emph{Stateless}. There is no state associated with this bean across method calls. However,
+during a method call, a stateless bean may keep its state in instance variables.
+Since all instances of this bean are equivalent, the server may pool instances and
+assign them to clients as it sees fit. Stateless beans therefore offer better scalability
+than other bean types. 
+
+Appropriate, if: 
+
+\begin{itemize}
+    \item The bean’s state has no data for a specific client.
+    \item In a single method invocation, the bean performs a generic task for all clients. For example, you might use a stateless session bean to send an email that confirms an online order.
+    \item The bean implements a web service.
+\end{itemize}
+
+\emph{Singleton}. A singleton bean is instantiated once and kept for the lifetime of the server.
+Every client accesses the same instance of the bean. State is maintained between invocations,
+but not necessarily between crashes and shutdown.
+
+Appropriate, if: 
+
+\begin{itemize}
+    \item State needs to be shared across the application.
+    \item A single enterprise bean needs to be accessed by multiple threads concurrently.
+    \item The application needs an enterprise bean to perform tasks upon application startup and shutdown.
+    \item The bean implements a web service.
+\end{itemize}
+
 \subsection{EJB and SOAP Internals}
 
 \begin{comment}
