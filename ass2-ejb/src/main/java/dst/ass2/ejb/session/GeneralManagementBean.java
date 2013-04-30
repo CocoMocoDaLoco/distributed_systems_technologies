@@ -24,6 +24,8 @@ import dst.ass2.ejb.session.exception.AssignmentException;
 import dst.ass2.ejb.session.interfaces.IGeneralManagementBean;
 import dst.ass2.ejb.util.EJBUtils;
 
+/* "Share not state, invoked independently of each other, invokable by client directly. */
+
 @Remote(IGeneralManagementBean.class)
 @Stateless
 public class GeneralManagementBean implements IGeneralManagementBean {
