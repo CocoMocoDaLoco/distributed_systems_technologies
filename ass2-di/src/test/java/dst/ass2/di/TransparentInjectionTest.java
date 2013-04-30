@@ -19,10 +19,15 @@ public class TransparentInjectionTest {
         ic = InjectionControllerFactory.getTransparentInstance();
     }
 
+    @Test
+    public void testTransparentInjection() throws IllegalAccessException {
+        testInject();
+        testHierarchy();
+    }
+
     /**
      * Injecting prototypes and singletons into an object.
      */
-    @Test
     public void testInject() {
         Container container = new Container();
 
@@ -51,7 +56,6 @@ public class TransparentInjectionTest {
     /**
      * Injecting components into hierarchies.
      */
-    @Test
     public void testHierarchy() throws IllegalAccessException {
         Container container = new Container();
         Long oldId = container.id;
