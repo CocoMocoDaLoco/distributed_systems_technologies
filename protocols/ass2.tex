@@ -90,9 +90,86 @@ Appropriate, if:
 
 \subsection{EJB and SOAP Internals}
 
-\begin{comment}
-Study EJB and SOAP network traffic, discuss these in some detail.
-\end{comment}
+The relevant incoming and outgoing packet streams are shown in the following figures.
+The SOAP traffic is taken from HTTP/XML protocol packets, while the EJB traffic is contained
+in GIOP (General Inter-ORB Protocol) packets.
+
+As we can see, both basically contain the same data; but the SOAP communication
+is marshalled entirely into XML, while EJB uses its own binary serialization and is therefore
+much shorter (but less readable).
+
+\begin{figure}
+{\small
+\begin{lstlisting}[language=XML]
+POST /StatisticsService/service HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: text/xml;charset=UTF-8
+SOAPAction: "http://localhost:8080/StatisticsService/input"
+Content-Length: 620
+Host: localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:ses="http://session.ejb.ass2.dst/">
+   <soapenv:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+      <ses:arg1>grid1</ses:arg1>
+   <wsa:Action>http://localhost:8080/StatisticsService/input</wsa:Action><wsa:MessageID>uuid:ccb3d231-e8ab-4e12-84a6-2f15b2d5f90c</wsa:MessageID><wsa:To>http://localhost:8080/StatisticsService/service</wsa:To></soapenv:Header>
+   <soapenv:Body>
+      <ses:getStatisticsForGrid>
+         <!--Optional:-->
+         <arg0>1</arg0>
+      </ses:getStatisticsForGrid>
+   </soapenv:Body>
+</soapenv:Envelope>
+\end{lstlisting}
+}
+\caption{Outgoing SOAP request traffic}
+\end{figure}
+
+\begin{figure}
+{\small
+\begin{lstlisting}[language=XML]
+HTTP/1.1 200 OK
+server: grizzly/1.9.50
+Content-Type: text/xml;charset=utf-8
+Transfer-Encoding: chunked
+Date: Tue, 30 Apr 2013 12:32:02 GMT
+
+22d
+<?xml version='1.0' encoding='UTF-8'?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"><S:Header><Action xmlns="http://www.w3.org/2005/08/addressing">http://localhost:8080/StatisticsService/output</Action><MessageID xmlns="http://www.w3.org/2005/08/addressing">uuid:dd273c77-153a-4c30-b7c4-e94ea1596ae9</MessageID><RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:ccb3d231-e8ab-4e12-84a6-2f15b2d5f90c</RelatesTo><To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To></S:Header><S:Body>
+10b
+<ns2:getStatisticsForGridResponse xmlns:ns2="http://session.ejb.ass2.dst/"><return>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;stats&gt;&lt;name&gt;grid1&lt;/name&gt;&lt;/stats&gt;</return></ns2:getStatisticsForGridResponse></S:Body></S:Envelope>
+0
+\end{lstlisting}
+}
+\caption{Incoming SOAP response traffic}
+\end{figure}
+
+\begin{figure}
+{\small
+\begin{lstlisting}
+GIOP.......p...*...................&...d....S1AS-ORB............RootPOA....
+#RFMBase#......a89608981053636609_RBusiness_dst.ass2.ejb.session.interfaces._IJobManagementBean_Remote-EJBObject....... .>Z..c..................Z..k............login.......................................NEO....................#IDL:omg.org/CORBA/WStringValue:1.0.........h.a.n.s.i...................p.w.1
+\end{lstlisting}
+}
+\caption{Outgoing EJB request traffic}
+\end{figure}
+
+\begin{figure}
+{\small
+\begin{lstlisting}
+GIOP...........*........NEO................5IDL:dst/ass2/ejb/session/_exception/AssignmentEx:1.0............file:/tmp/dst/gfembed6532460383916994258tmp/applications/ass2-ejb/ file:/tmp/dst/gfembed6532460383916994258tmp/generated/ejb/ass2-ejb......YRMI:dst.ass2.ejb.session.exception.AssignmentException:C541A83F0F5CCDCE:566BE4E93509FD43.......................
+...#IDL:omg.org/CORBA/WStringValue:1.0.....:...6...I.n.c.o.r.r.e.c.t. .u.s.e.r. .o.r. .p.a.s.s.w.o.r.d.........
+...ERMI:[Ljava.lang.StackTraceElement;:CD38F9930EA8AAEC:6109C59A2636DD85...........).......BRMI:java.lang.StackTraceElement:CD38F9930EA8AAEC:6109C59A2636DD85......................N...d.s.t...a.s.s.2...e.j.b...s.e.s.s.i.o.n...J.o.b.M.a.n.a.g.e.m.e.n.t.B.e.a.n.....................J.o.b.M.a.n.a.g.e.m.e.n.t.B.e.a.n...j.a.v.a.............D.......l.o.g.i.n...............................J...s.u.n...r.e.f.l.e.c.t...N.a.t.i.v.e.M.e.t.h.o.d.A.c.c.e.s.s.o.r.I.m.p.l.................<...N.a.t.i.v.e.M.e.t.h.o.d.A.c.c.e.s.s.o.r.I.m.p.l...j.a.v.a...........p....GIOP...........*...i.n.v.o.k.e.0...............9.......$.......x...........0.......i.n.v.o.k.e.0...............+...............R...s.u.n...r.e.f.l.e.c.t...D.e.l.e.g.a.t.i.n.g.M.e.t.h.o.d.A.c.c.e.s.s.o.r.I.m.p.l94...............D...D.e.l.e.g.a.t.i.n.g.M.e.t.h.o.d.A.c.c.e.s.s.o.r.I.m.p.l...j.a.v.a.......................Y...........0...2...j.a.v.a...l.a.n.g...r.e.f.l.e.c.t...M.e.t.h.o.din...................M.e.t.h.o.d...j.a.v.a.......................................t...o.r.g...g.l.a.s.s.f.i.s.h...e.j.b...s.e.c.u.r.i.t.y...a.p.p.l.i.c.a.t.i.o.n...E.J.B.S.e.c.u.r.i.t.y.M.a.n.a.g.e.r...........(...0...E.J.B.S.e.c.u.r.i.t.y.M.a.n.a.g.e.r...j.a.v.a...................r.u.n.M.e.t.h.o.d...............d.......................p...........d...................
+[...]
+RRMI:java.util.Collections\U0024UnmodifiableList:0FB2D524A8F804A3:FC0F2531B5EC8E10..l...
+...:RMI:java.util.ArrayList:F655154F32815380:7881D21D99C7619D..................
+...IRMI:org.omg.custGIOP.......`...*om.java.util.ArrayList:F655154F32815380:7881D21D99C7619D.a.n...................L............
+\end{lstlisting}
+}
+\caption{Incoming EJB response traffic}
+\end{figure}
 
 \subsection{Transparent Injection}
 
