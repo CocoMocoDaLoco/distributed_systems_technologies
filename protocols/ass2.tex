@@ -203,4 +203,26 @@ might know from other lectures (for instance, Java RMI, CORBA, or even socket pr
 
 \vspace{3mm}
 
+First of all, EJB is obviously related to the JVM and cannot interoperate with other languages
+and technologies. Web services on the other hand are completely platform-agnostic.
+
+If performance is an issue, then EJB will be a better choice. Web services have to communicate
+through extra layers, and need to marshall/unmarshall all parameters.
+
+Both EJB and web services are well defined. Stable standards exist for both SOAP and EJB.
+
+EJB provides additional functionality such as transaction management, connection pooling, naming and
+lookups.
+
+Public vs. private: if the application will only be used internally by (more or less) trusted clients,
+EJB is probably a good choice. On the other hand, web services handle publically exposed interfaces better.
+
+Java RMI is somewhat comparable to EJB. It offers less functionality, but otherwise has very similar
+advantages and disadvantages as EJB. CORBA is a little more low level, and not tied to any single language.
+Socket programming is of course as low as we can get. The lower-level a protocol is, the less services it
+offers, and the less overhead it has. On the other hand, programming lower level protocols often requires
+manually taking care of details which are handled automatically in higher level protocols. In the end,
+there is no single best choice - the decision always has to be made tailored to the project
+and to the developers.
+
 \end{document}
