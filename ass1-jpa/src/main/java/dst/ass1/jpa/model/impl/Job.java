@@ -1,5 +1,7 @@
 package dst.ass1.jpa.model.impl;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +25,7 @@ public class Job implements IJob {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer numCPUs = 0;
-    private Integer executionTime = 0;
+    private Integer executionTime;
     private boolean isPaid;
 
     @OneToOne(targetEntity = Environment.class,
@@ -61,6 +63,11 @@ public class Job implements IJob {
 
     @Override
     public Integer getExecutionTime() {
+        if (executionTime == null || executionTime == 0) {
+            final Date end = (execution.getEnd() == null) ? new Date() : execution.getEnd();
+            final Date start = execution.getStart();
+            executionTime = (int)(end.getTime() - start.getTime()) / 1000;
+        }
         return executionTime;
     }
 
