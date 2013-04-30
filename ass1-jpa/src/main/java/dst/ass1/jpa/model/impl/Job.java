@@ -22,8 +22,8 @@ public class Job implements IJob {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Integer numCPUs;
-    private Integer executionTime;
+    private Integer numCPUs = 0;
+    private Integer executionTime = 0;
     private boolean isPaid;
 
     @OneToOne(targetEntity = Environment.class,
