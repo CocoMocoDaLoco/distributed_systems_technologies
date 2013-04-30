@@ -27,6 +27,9 @@ di:
 di-agent:
 	mvn install -Pass2-di-agent -e
 
+di-agent-debug:
+	mvn install -Pass2-di-agent -e -Dmaven.surefire.debug
+
 protocols:
 	(cd protocols; pdflatex ass1; pdflatex ass1; rm -rf *.aux *.log)
 
