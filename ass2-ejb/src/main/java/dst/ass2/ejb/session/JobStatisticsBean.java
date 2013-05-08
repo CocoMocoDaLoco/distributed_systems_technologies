@@ -31,7 +31,9 @@ import dst.ass2.ejb.ws.impl.GetStatsResponseAdapter;
 @Stateless
 @Addressing
 @WebService(serviceName = Constants.SERVICE_NAME,
-            name = Constants.NAME)
+            name = Constants.NAME,
+            targetNamespace = Constants.NAMESPACE,
+            portName = Constants.PORT_NAME)
 public class JobStatisticsBean implements IJobStatisticsBean {
 
     @PersistenceContext
