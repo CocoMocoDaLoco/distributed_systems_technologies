@@ -3,6 +3,7 @@ package dst.ass2.di.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import dst.ass2.di.IInjectionController;
@@ -38,13 +39,15 @@ public class InjectionController implements IInjectionController {
         boolean idFound = false;
         final Long id = nextId.getAndIncrement();
 
+        Map<String, Annotation> names = new HashMap<String, Annotation>();
+
         for (clazz = obj.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
             if (!isComponent(clazz)) {
                 continue;
             }
 
             componentFound = true;
-            idFound |= initializeClass(obj, clazz, id);
+            idFound |= initializeClass(obj, clazz, id, names);
         }
 
         if (!componentFound) {
@@ -158,22 +161,53 @@ public class InjectionController implements IInjectionController {
         return null;
     }
 
-    private boolean initializeClass(Object obj, final Class<?> clazz, final Long id) {
+    private boolean initializeClass(Object obj, final Class<?> clazz, final Long id, Map<String, Annotation> names) {
         boolean idFound = false;
 
         for (Field field : clazz.getDeclaredFields()) {
+            Annotation processedAnnotation = null;
             for (Annotation annotation : field.getDeclaredAnnotations()) {
                 final Class<?> annotationType = annotation.annotationType();
                 if (annotationType == ComponentId.class) {
                     injectId(id, obj, field);
                     idFound = true;
                 } else if (annotationType == Inject.class) {
+                    processedAnnotation = annotation;
                     inject(obj, field, (Inject)annotation);
                 }
             }
+
+            if (isAmbiguousName(names, field.getName(), processedAnnotation)) {
+                System.err.printf("Ambiguous name %s in class %s%n", field.getName(), clazz.getName());
+            }
+            names.put(field.getName(), processedAnnotation);
         }
 
         return idFound;
+    }
+
+    private static boolean isAmbiguousName(Map<String, Annotation> names, String name,
+            Annotation annotation) {
+        if (!names.containsKey(name)) {
+            return false;
+        }
+
+        final Inject otherAnnotation = (Inject)names.get(name);
+        final Inject thisAnnotation = (Inject)annotation;
+
+        if (otherAnnotation == null && thisAnnotation == null) {
+            return false;
+        }
+
+        if (otherAnnotation == null || thisAnnotation == null) {
+            return true;
+        }
+
+        if (otherAnnotation.required() != thisAnnotation.required() || otherAnnotation.specificType() != thisAnnotation.specificType()) {
+            return true;
+        }
+
+        return false;
     }
 
 }

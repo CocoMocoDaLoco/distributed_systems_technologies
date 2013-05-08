@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
+import dst.ass2.di.type.AmbiguousSubType;
 import dst.ass2.di.type.ComplexComponent;
 import dst.ass2.di.type.Container;
 import dst.ass2.di.type.SimpleSingleton;
@@ -161,5 +162,29 @@ public class SpecialInjectionTest {
         assertNotNull("'component' of SuperType must not be null.", superFields.get("component"));
         // The injected objects must be different
         assertFalse("The 'component's of SuperType and SubType must not be the same object instance.", subFields.get("component") == superFields.get("component"));
+    }
+
+    /**
+     * Tests whether private hidden fields of super types are injected.
+     */
+    @Test
+    public void testAmbiguousInheritance() {
+        // When initializing an object, all fields are initialized (even those, which are not visible).
+        AmbiguousSubType subType = new AmbiguousSubType();
+        ic.initialize(subType);
+
+        // Retrieving all declared fields of the SubType and SuperType
+        Map<String, Object> subFields = InjectionUtils.getFields(subType, AmbiguousSubType.class);
+        Map<String, Object> superFields = InjectionUtils.getFields(subType, SuperType.class);
+
+        // Verify that the component IDs are set
+        assertNotNull("'id' of SubType must not be null.", subFields.get("id"));
+        assertNotNull("'id' of SuperType must not be null.", superFields.get("id"));
+        // The component IDs must be different
+        assertTrue("The 'id's of SuperType and SubType must be equal.", subFields.get("id").equals(superFields.get("id")));
+
+        // Verify that all fields are initialized properly
+        assertNull("'component' of SubType must not be null.", subFields.get("component"));
+        assertNotNull("'component' of SuperType must be null.", superFields.get("component"));
     }
 }
