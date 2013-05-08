@@ -14,6 +14,7 @@ import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -168,16 +169,20 @@ public class JobManagementBean implements IJobManagementBean {
             throw new AssignmentException("Not logged in");
         }
 
-        TypedQuery<IComputer> q = entityManager.createQuery("from Computer", IComputer.class);
+        TypedQuery<IComputer> q = entityManager.createQuery("from Computer c order by c.id", IComputer.class);
         List<IComputer> computers = q.getResultList();
+
+        lockComputers(computers);
 
         Map<Long, IComputer> computerMap = new HashMap<Long, IComputer>();
         for (IComputer c : computers) {
             computerMap.put(c.getId(), c);
         }
 
-        if (!isValidAssignment(cache, computers)) {
-            throw new AssignmentException("Assignment is invalid");
+        for (AssignmentDTO dto : cache) {
+            if (!isValidAssignment(computerMap, dto)) {
+                throw new AssignmentException("Assignment is invalid");
+            }
         }
 
         for (AssignmentDTO dto : cache) {
@@ -225,8 +230,25 @@ public class JobManagementBean implements IJobManagementBean {
         entityManager.persist(job);
     }
 
-    private boolean isValidAssignment(List<AssignmentDTO> assignment, List<IComputer> computers) {
-        // TODO Auto-generated method stub
+    private void lockComputers(List<IComputer> computers) {
+        for (IComputer c : computers) {
+            entityManager.lock(c, LockModeType.PESSIMISTIC_READ);
+        }
+    }
+
+    private boolean isValidAssignment(Map<Long, IComputer> computerMap, AssignmentDTO dto) {
+        for (long id : dto.getComputerIds()){
+            final IComputer c = computerMap.get(id);
+            entityManager.refresh(c);
+
+            for (IExecution e : c.getExecutions()) {
+                entityManager.refresh(e);
+
+                if (e.getStatus() != JobStatus.FAILED && e.getStatus() != JobStatus.FINISHED) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
