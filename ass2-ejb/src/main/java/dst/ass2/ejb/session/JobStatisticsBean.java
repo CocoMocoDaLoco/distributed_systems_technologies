@@ -51,8 +51,6 @@ public class JobStatisticsBean implements IJobStatisticsBean {
             throw new WebServiceException("Invalid arguments");
         }
 
-        /* TODO: "A SOAP fault of type UnknownGridFault" */
-
         final boolean gridExists = entityManager
                 .createQuery("from Grid g where g.name = :gridname", IGrid.class)
                 .setParameter("gridname", name)
