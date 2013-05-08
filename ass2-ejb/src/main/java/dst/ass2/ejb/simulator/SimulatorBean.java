@@ -44,7 +44,7 @@ public class SimulatorBean {
         IExecution e = job.getExecution();
         e.setStatus(JobStatus.FINISHED);
         e.setEnd(now);
-        job.setExecutionTime((int)(now.getTime() - e.getStart().getTime()));
+        job.setExecutionTime((int)(now.getTime() - e.getStart().getTime()) / 1000);
 
         entityManager.persist(job);
     }
