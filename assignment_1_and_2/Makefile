@@ -1,4 +1,4 @@
-all: jpa nosql
+all: jpa nosql ejb ws di di-agent
 
 jpa:
 	mvn install -Pass1-jpa -e
@@ -30,11 +30,7 @@ di-agent:
 di-agent-debug:
 	mvn install -Pass2-di-agent -e -Dmaven.surefire.debug
 
-protocols:
-	(cd protocols; pdflatex ass1; pdflatex ass1; rm -rf *.aux *.log)
-	(cd protocols; pdflatex ass2; pdflatex ass2; rm -rf *.aux *.log)
-
-package: protocols
+package:
 	find -L \( ! -regex '^.*/target/.*' -a ! -regex '^./.git/.*' \) | zip ass2.zip -@
 
 clean:
@@ -45,6 +41,4 @@ clean:
 	mvn clean -Pass2-ws -e
 	mvn clean -Pass2-di -e
 	mvn clean -Pass2-di-agent -e
-	rm -rf ass1.zip
-
-.PHONY: protocols
+	rm -rf ass2.zip
