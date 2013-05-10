@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>dst</artifactId>
+		<groupId>at.ac.tuwien.infosys.dst</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ass3-jms</artifactId>
+	<name>ass3-jms</name>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>at.ac.tuwien.infosys.dst</groupId>
+			<artifactId>ass3-shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>org.glassfish.main.extras</groupId>
+			<artifactId>glassfish-embedded-all</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>ass3-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>at.ac.tuwien.infosys.dst</groupId>
+									<artifactId>ass3-shared</artifactId>
+								</artifactItem>
+							</artifactItems>
+							<excludeGroupIds>cglib,junit,org.glassfish.main.extras,org.jboss.spec</excludeGroupIds>
+							<excludes>META-INF/**</excludes>
+							<outputDirectory>${basedir}/target/classes</outputDirectory>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-ejb-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<ejbVersion>3.1</ejbVersion>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>ejb</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.glassfish.embedded</groupId>
+						<artifactId>maven-embedded-glassfish-plugin</artifactId>
+						<version>3.1.2.2</version>
+						<configuration>
+							<app>target/${project.build.finalName}.jar</app>
+							<name>${project.name}</name>
+							<autoDelete>true</autoDelete>
+							<port>8080</port>
+							<contextRoot>${project.name}</contextRoot>
+							<configFile>${basedir}/src/main/resources/domain.xml</configFile>
+							<systemProperties>
+								<property>glassfish.embedded.tmpdir=${java.io.tmpdir}/dst</property>
+							</systemProperties>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>admin</id>
+								<phase>install</phase>
+								<goals>
+									<goal>admin</goal>
+								</goals>
+								<configuration>
+									<commands>
+										<command>add-resources ${basedir}/src/main/resources/jms_config.xml</command>
+									</commands>
+								</configuration>
+							</execution>
+							<execution>
+								<id>run</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>ass3-jms</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>**/Test*</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>
