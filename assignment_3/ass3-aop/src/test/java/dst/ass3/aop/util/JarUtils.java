@@ -25,37 +25,37 @@ import static org.springframework.util.ClassUtils.convertClassNameToResourcePath
  * Note that the {@link #main(String...)} method can be adjusted to create other plugins.
  */
 public final class JarUtils {
-	private JarUtils() {
-	}
+    private JarUtils() {
+    }
 
-	public static void main(String... args) throws IOException {
-		String path = join(args, " ");
-		File dir = new File(defaultIfBlank(path, "ass3-aop/src/test/resources"));
+    public static void main(String... args) throws IOException {
+        String path = join(args, " ");
+        File dir = new File(defaultIfBlank(path, "ass3-aop/src/test/resources"));
 
-		createJar(new File(dir, "simple.zip"), "dst.ass3.aop.sample.SimplePluginExecutable");
+        createJar(new File(dir, "simple.zip"), "dst.ass3.aop.sample.SimplePluginExecutable");
 
-		createJar(new File(dir, "all.zip"), "dst.ass3.aop.sample.SimplePluginExecutable",
-				"dst.ass3.aop.sample.IgnoredPluginExecutable");
-	}
+        createJar(new File(dir, "all.zip"), "dst.ass3.aop.sample.SimplePluginExecutable",
+                "dst.ass3.aop.sample.IgnoredPluginExecutable");
+    }
 
-	/**
-	 * Creates a new JAR file containing the given classes.
-	 *
-	 * @param jarFile the destination JAR file
-	 * @param classes the classes to add
-	 * @throws IOException if an I/O error has occurred
-	 */
-	public static void createJar(File jarFile, String... classes) throws IOException {
-		JarOutputStream stream = new JarOutputStream(openOutputStream(jarFile));
-		stream.setLevel(ZipOutputStream.STORED);
-		try {
-			for (String clazz : classes) {
-				String path = convertClassNameToResourcePath(clazz) + CLASS_FILE_SUFFIX;
-				stream.putNextEntry(new JarEntry(path));
-				copy(new AutoCloseInputStream(new ClassPathResource(path).getInputStream()), stream);
-			}
-		} finally {
-			closeQuietly(stream);
-		}
-	}
+    /**
+     * Creates a new JAR file containing the given classes.
+     *
+     * @param jarFile the destination JAR file
+     * @param classes the classes to add
+     * @throws IOException if an I/O error has occurred
+     */
+    public static void createJar(File jarFile, String... classes) throws IOException {
+        JarOutputStream stream = new JarOutputStream(openOutputStream(jarFile));
+        stream.setLevel(ZipOutputStream.STORED);
+        try {
+            for (String clazz : classes) {
+                String path = convertClassNameToResourcePath(clazz) + CLASS_FILE_SUFFIX;
+                stream.putNextEntry(new JarEntry(path));
+                copy(new AutoCloseInputStream(new ClassPathResource(path).getInputStream()), stream);
+            }
+        } finally {
+            closeQuietly(stream);
+        }
+    }
 }

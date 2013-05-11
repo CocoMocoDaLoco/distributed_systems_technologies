@@ -30,86 +30,86 @@ import dst.ass3.model.TaskStatus;
  */
 public class Test3 extends AbstractEventTest {
 
-	private Semaphore semDuration;
-	private Semaphore semAss;
-	private Semaphore semProcessed;
+    private Semaphore semDuration;
+    private Semaphore semAss;
+    private Semaphore semProcessed;
 
-	private long taskId1 = 3L;
-	private long taskId2 = 6L;
+    private long taskId1 = 3L;
+    private long taskId2 = 6L;
 
-	private long jobId1 = 5L;
-	private long jobId2 = 7L;
+    private long jobId1 = 5L;
+    private long jobId2 = 7L;
 
-	@Test
-	public void test_TaskDurationEvent1() {
-		final long startTime = System.currentTimeMillis();
-		semDuration = new Semaphore(0);
-		semAss = new Semaphore(0);
-		semProcessed = new Semaphore(0);
+    @Test
+    public void test_TaskDurationEvent1() {
+        final long startTime = System.currentTimeMillis();
+        semDuration = new Semaphore(0);
+        semAss = new Semaphore(0);
+        semProcessed = new Semaphore(0);
 
-		ITask t1 = EventingFactory.createTask(taskId1, jobId1,
-				TaskStatus.ASSIGNED, "c1", TaskComplexity.EASY);
-		ITask t2 = EventingFactory.createTask(taskId2, jobId2,
-				TaskStatus.ASSIGNED, "c1", TaskComplexity.EASY);
+        ITask t1 = EventingFactory.createTask(taskId1, jobId1,
+                TaskStatus.ASSIGNED, "c1", TaskComplexity.EASY);
+        ITask t2 = EventingFactory.createTask(taskId2, jobId2,
+                TaskStatus.ASSIGNED, "c1", TaskComplexity.EASY);
 
-		test.initializeAll(new StatementAwareUpdateListener() {
+        test.initializeAll(new StatementAwareUpdateListener() {
 
-			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents,
-					EPStatement s, EPServiceProvider p) {
-				Long timestamp = null;
-				for (EventBean e : newEvents) {
-					System.out.println("LISTENER:" + e.getEventType().getName()
-							+ " " + e.getUnderlying());
-					String name = e.getEventType().getName();
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents,
+                    EPStatement s, EPServiceProvider p) {
+                Long timestamp = null;
+                for (EventBean e : newEvents) {
+                    System.out.println("LISTENER:" + e.getEventType().getName()
+                            + " " + e.getUnderlying());
+                    String name = e.getEventType().getName();
 
-					if (name.equals(Constants.EVENT_TASK_DURATION)) {
-						EventingUtils.ensureJobId("Duration", e, jobId1);
-						semDuration.release();
-					} else if (name.equals(Constants.EVENT_TASK_ASSIGNED)) {
-						timestamp = EventingUtils.getTimeStamp(e);
-						EventingUtils
-								.ensureJobId("Assigned", e, jobId1, jobId2);
-						if (timestamp < startTime) {
-							fail("starttime > timestamp (start time:"
-									+ startTime + ", timestamp:" + timestamp
-									+ ")");
-						}
-						semAss.release();
-					} else if (name.equals(Constants.EVENT_TASK_PROCESSED)) {
-						timestamp = EventingUtils.getTimeStamp(e);
-						EventingUtils.ensureJobId(
-								Constants.EVENT_TASK_PROCESSED, e, jobId1);
-						if (timestamp < startTime) {
-							fail("starttime > timestamp (start time:"
-									+ startTime + ", timestamp:" + timestamp
-									+ ")");
-						}
-						semProcessed.release();
-					}
+                    if (name.equals(Constants.EVENT_TASK_DURATION)) {
+                        EventingUtils.ensureJobId("Duration", e, jobId1);
+                        semDuration.release();
+                    } else if (name.equals(Constants.EVENT_TASK_ASSIGNED)) {
+                        timestamp = EventingUtils.getTimeStamp(e);
+                        EventingUtils
+                                .ensureJobId("Assigned", e, jobId1, jobId2);
+                        if (timestamp < startTime) {
+                            fail("starttime > timestamp (start time:"
+                                    + startTime + ", timestamp:" + timestamp
+                                    + ")");
+                        }
+                        semAss.release();
+                    } else if (name.equals(Constants.EVENT_TASK_PROCESSED)) {
+                        timestamp = EventingUtils.getTimeStamp(e);
+                        EventingUtils.ensureJobId(
+                                Constants.EVENT_TASK_PROCESSED, e, jobId1);
+                        if (timestamp < startTime) {
+                            fail("starttime > timestamp (start time:"
+                                    + startTime + ", timestamp:" + timestamp
+                                    + ")");
+                        }
+                        semProcessed.release();
+                    }
 
-				}
+                }
 
-			}
-		}, false);
+            }
+        }, false);
 
-		sleep(SHORT_WAIT); // wait for setup
-		logCheckpoint(0, startTime);
+        sleep(SHORT_WAIT); // wait for setup
+        logCheckpoint(0, startTime);
 
-		test.addEvent(t1);
-		test.addEvent(t2);
+        test.addEvent(t1);
+        test.addEvent(t2);
 
-		logCheckpoint(1, startTime);
-		t1.setStatus(TaskStatus.PROCESSED);
-		test.addEvent(t1);
+        logCheckpoint(1, startTime);
+        t1.setStatus(TaskStatus.PROCESSED);
+        test.addEvent(t1);
 
-		logTimed("checking results", startTime);
-		assure(semDuration, 1, "1 taskDuration event expected!",
-				ESPER_CHECK_TIMEOUT);
-		assure(semAss, 2, "2 taskAssigned events expected!",
-				ESPER_CHECK_TIMEOUT);
-		assure(semProcessed, 1, "1 taskProcessed event expected!",
-				ESPER_CHECK_TIMEOUT);
+        logTimed("checking results", startTime);
+        assure(semDuration, 1, "1 taskDuration event expected!",
+                ESPER_CHECK_TIMEOUT);
+        assure(semAss, 2, "2 taskAssigned events expected!",
+                ESPER_CHECK_TIMEOUT);
+        assure(semProcessed, 1, "1 taskProcessed event expected!",
+                ESPER_CHECK_TIMEOUT);
 
-	}
+    }
 }

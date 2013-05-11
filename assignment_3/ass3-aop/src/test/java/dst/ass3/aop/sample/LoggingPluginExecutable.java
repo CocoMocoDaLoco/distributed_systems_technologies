@@ -3,7 +3,7 @@ package dst.ass3.aop.sample;
 import java.util.logging.Logger;
 
 public class LoggingPluginExecutable extends AbstractPluginExecutable {
-	@SuppressWarnings("unused")
-	private static Logger log = Logger.getLogger(LoggingPluginExecutable.class
-			.getName());
+    @SuppressWarnings("unused")
+    private static Logger log = Logger.getLogger(LoggingPluginExecutable.class
+            .getName());
 }

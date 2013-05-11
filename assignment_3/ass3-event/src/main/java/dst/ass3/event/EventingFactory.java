@@ -12,15 +12,15 @@ import dst.ass3.dto.TaskDTO;
 public class EventingFactory {
 
 
-	public static IEventProcessing getInstance() {
+    public static IEventProcessing getInstance() {
 
-		// TODO
+        // TODO
 
-		return null;
-	}
+        return null;
+    }
 
-	public static ITask createTask(Long id, Long jobId, TaskStatus status,
-			String ratedBy, TaskComplexity complexity) {
-		return new TaskDTO(id, jobId, status, ratedBy, complexity);
-	}
+    public static ITask createTask(Long id, Long jobId, TaskStatus status,
+            String ratedBy, TaskComplexity complexity) {
+        return new TaskDTO(id, jobId, status, ratedBy, complexity);
+    }
 }

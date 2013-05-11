@@ -28,44 +28,44 @@ import dst.ass3.model.TaskStatus;
  */
 public class Test1 extends AbstractEventTest {
 
-	private Semaphore sem;
+    private Semaphore sem;
 
-	@Test
-	public void test_TaskDurationEvent() {
-		final long startTime = System.currentTimeMillis();
-		sem = new Semaphore(0);
+    @Test
+    public void test_TaskDurationEvent() {
+        final long startTime = System.currentTimeMillis();
+        sem = new Semaphore(0);
 
-		ITask t1 = EventingFactory.createTask(101L, 111L, TaskStatus.ASSIGNED,
-				"c1", TaskComplexity.EASY);
+        ITask t1 = EventingFactory.createTask(101L, 111L, TaskStatus.ASSIGNED,
+                "c1", TaskComplexity.EASY);
 
-		test.initializeAll(new StatementAwareUpdateListener() {
+        test.initializeAll(new StatementAwareUpdateListener() {
 
-			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents,
-					EPStatement s, EPServiceProvider p) {
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents,
+                    EPStatement s, EPServiceProvider p) {
 
-				for (EventBean e : newEvents) {
-					String name = e.getEventType().getName();
-					if (name.equals(Constants.EVENT_TASK_DURATION)) {
-						sem.release();
-					}
-					System.out.println("LISTENER " + e.getEventType().getName()
-							+ " " + e.getUnderlying());
-				}
+                for (EventBean e : newEvents) {
+                    String name = e.getEventType().getName();
+                    if (name.equals(Constants.EVENT_TASK_DURATION)) {
+                        sem.release();
+                    }
+                    System.out.println("LISTENER " + e.getEventType().getName()
+                            + " " + e.getUnderlying());
+                }
 
-			}
-		}, false);
+            }
+        }, false);
 
-		sleep(SHORT_WAIT);
-		logCheckpoint(0, startTime);
-		test.addEvent(t1);
+        sleep(SHORT_WAIT);
+        logCheckpoint(0, startTime);
+        test.addEvent(t1);
 
-		logCheckpoint(1, startTime);
-		t1.setStatus(TaskStatus.PROCESSED);
-		test.addEvent(t1);
+        logCheckpoint(1, startTime);
+        t1.setStatus(TaskStatus.PROCESSED);
+        test.addEvent(t1);
 
-		logTimed("checking results", startTime);
-		assure(sem, 1, "1 taskDuration event expected!", ESPER_CHECK_TIMEOUT);
+        logTimed("checking results", startTime);
+        assure(sem, 1, "1 taskDuration event expected!", ESPER_CHECK_TIMEOUT);
 
-	}
+    }
 }

@@ -31,85 +31,85 @@ import dst.ass3.model.TaskStatus;
  */
 public class Test6 extends AbstractEventTest {
 
-	private Semaphore semSwitch;
+    private Semaphore semSwitch;
 
-	@Test
-	public void test_PatternMatchingQuery() {
-		final long startTime = System.currentTimeMillis();
+    @Test
+    public void test_PatternMatchingQuery() {
+        final long startTime = System.currentTimeMillis();
 
-		semSwitch = new Semaphore(0);
-		test = EventingFactory.getInstance();
+        semSwitch = new Semaphore(0);
+        test = EventingFactory.getInstance();
 
-		ITask t1 = EventingFactory.createTask(601L, 611L, TaskStatus.ASSIGNED,
-				"c1", TaskComplexity.EASY);
+        ITask t1 = EventingFactory.createTask(601L, 611L, TaskStatus.ASSIGNED,
+                "c1", TaskComplexity.EASY);
 
-		test.initializeAll(new StatementAwareUpdateListener() {
+        test.initializeAll(new StatementAwareUpdateListener() {
 
-			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents,
-					EPStatement s, EPServiceProvider p) {
-				try {
-					for (EventBean e : newEvents) {
-						String name = e.getEventType().getName();
-						if (name.equals(Constants.EVENT_TASK_ASSIGNED)
-								|| name.equals(Constants.EVENT_TASK_PROCESSED)
-								|| name.equals(Constants.EVENT_TASK_DURATION)) {
-							return;
-						}
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents,
+                    EPStatement s, EPServiceProvider p) {
+                try {
+                    for (EventBean e : newEvents) {
+                        String name = e.getEventType().getName();
+                        if (name.equals(Constants.EVENT_TASK_ASSIGNED)
+                                || name.equals(Constants.EVENT_TASK_PROCESSED)
+                                || name.equals(Constants.EVENT_TASK_DURATION)) {
+                            return;
+                        }
 
-						List<EventBean> eventBeans = EventingUtils
-								.getAliasedEventBeans(e);
+                        List<EventBean> eventBeans = EventingUtils
+                                .getAliasedEventBeans(e);
 
-						for (EventBean task : eventBeans) {
-							if (task != null) {
-								TaskStatus status = getTaskStatus(task);
+                        for (EventBean task : eventBeans) {
+                            if (task != null) {
+                                TaskStatus status = getTaskStatus(task);
 
-								if (status == null
-										|| !status
-												.equals(TaskStatus.READY_FOR_PROCESSING))
-									continue;
+                                if (status == null
+                                        || !status
+                                                .equals(TaskStatus.READY_FOR_PROCESSING))
+                                    continue;
 
-								System.out.println("job id "
-										+ task.getUnderlying());
+                                System.out.println("job id "
+                                        + task.getUnderlying());
 
-								assertEquals("complexity wrong",
-										TaskComplexity.EASY,
-										getTaskComplexity(task));
-								assertEquals("ratedBy wrong", "c1",
-										task.get("ratedBy").toString());
-								assertEquals("jobId wrong", 611L, EventingUtils
-										.getLong(task, "jobId").longValue());
-								semSwitch.release();
+                                assertEquals("complexity wrong",
+                                        TaskComplexity.EASY,
+                                        getTaskComplexity(task));
+                                assertEquals("ratedBy wrong", "c1",
+                                        task.get("ratedBy").toString());
+                                assertEquals("jobId wrong", 611L, EventingUtils
+                                        .getLong(task, "jobId").longValue());
+                                semSwitch.release();
 
-								break;
-							}
-						}
-					}
+                                break;
+                            }
+                        }
+                    }
 
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}, false);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }, false);
 
-		sleep(SHORT_WAIT); // wait for setup
-		logCheckpoint(0, startTime);
+        sleep(SHORT_WAIT); // wait for setup
+        logCheckpoint(0, startTime);
 
-		t1.setStatus(TaskStatus.READY_FOR_PROCESSING);
-		test.addEvent(t1);
+        t1.setStatus(TaskStatus.READY_FOR_PROCESSING);
+        test.addEvent(t1);
 
-		for (int i = 0; i < 3; i++) {
-			t1.setStatus(TaskStatus.PROCESSING_NOT_POSSIBLE);
-			test.addEvent(t1);
-			sleep(SHORT_WAIT);
+        for (int i = 0; i < 3; i++) {
+            t1.setStatus(TaskStatus.PROCESSING_NOT_POSSIBLE);
+            test.addEvent(t1);
+            sleep(SHORT_WAIT);
 
-			t1.setStatus(TaskStatus.READY_FOR_PROCESSING);
-			test.addEvent(t1);
-		}
+            t1.setStatus(TaskStatus.READY_FOR_PROCESSING);
+            test.addEvent(t1);
+        }
 
-		sleep(SHORT_WAIT); // wait for all events
-		logTimed("checking results", startTime);
+        sleep(SHORT_WAIT); // wait for all events
+        logTimed("checking results", startTime);
 
-		assure(semSwitch, 1, "1 switch event expected!", ESPER_CHECK_TIMEOUT);
-	}
+        assure(semSwitch, 1, "1 switch event expected!", ESPER_CHECK_TIMEOUT);
+    }
 }

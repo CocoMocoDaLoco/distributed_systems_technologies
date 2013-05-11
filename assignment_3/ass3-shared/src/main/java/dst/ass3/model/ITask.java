@@ -2,23 +2,23 @@ package dst.ass3.model;
 
 public interface ITask {
 
-	public Long getId();
+    public Long getId();
 
-	public void setId(Long id);
+    public void setId(Long id);
 
-	public Long getJobId();
+    public Long getJobId();
 
-	public void setJobId(Long jobId);
+    public void setJobId(Long jobId);
 
-	public TaskStatus getStatus();
+    public TaskStatus getStatus();
 
-	public void setStatus(TaskStatus status);
+    public void setStatus(TaskStatus status);
 
-	public String getRatedBy();
+    public String getRatedBy();
 
-	public void setRatedBy(String ratedBy);
+    public void setRatedBy(String ratedBy);
 
-	public TaskComplexity getComplexity();
+    public TaskComplexity getComplexity();
 
-	public void setComplexity(TaskComplexity complexity);
+    public void setComplexity(TaskComplexity complexity);
 }

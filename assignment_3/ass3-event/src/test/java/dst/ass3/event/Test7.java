@@ -35,126 +35,126 @@ import dst.ass3.model.TaskStatus;
  */
 public class Test7 extends AbstractEventTest {
 
-	private Semaphore semSwitches;
+    private Semaphore semSwitches;
 
-	private HashMap<Long, Long> switches;
-	private ArrayList<ITask> running;
+    private HashMap<Long, Long> switches;
+    private ArrayList<ITask> running;
 
-	@Test
-	public void test_PatternMatchingQueryComplex() {
-		final long startTime = System.currentTimeMillis();
+    @Test
+    public void test_PatternMatchingQueryComplex() {
+        final long startTime = System.currentTimeMillis();
 
-		semSwitches = new Semaphore(0);
+        semSwitches = new Semaphore(0);
 
-		running = new ArrayList<ITask>();
-		switches = new HashMap<Long, Long>();
+        running = new ArrayList<ITask>();
+        switches = new HashMap<Long, Long>();
 
-		test.initializeAll(new StatementAwareUpdateListener() {
+        test.initializeAll(new StatementAwareUpdateListener() {
 
-			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents,
-					EPStatement s, EPServiceProvider p) {
-				try {
-					for (EventBean e : newEvents) {
-						String name = e.getEventType().getName();
-						if (name.equals(Constants.EVENT_TASK_ASSIGNED)
-								|| name.equals(Constants.EVENT_TASK_PROCESSED)
-								|| name.equals(Constants.EVENT_TASK_DURATION)) {
-							return;
-						}
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents,
+                    EPStatement s, EPServiceProvider p) {
+                try {
+                    for (EventBean e : newEvents) {
+                        String name = e.getEventType().getName();
+                        if (name.equals(Constants.EVENT_TASK_ASSIGNED)
+                                || name.equals(Constants.EVENT_TASK_PROCESSED)
+                                || name.equals(Constants.EVENT_TASK_DURATION)) {
+                            return;
+                        }
 
-						List<EventBean> eventBeans = EventingUtils
-								.getAliasedEventBeans(e);
+                        List<EventBean> eventBeans = EventingUtils
+                                .getAliasedEventBeans(e);
 
-						for (EventBean task : eventBeans) {
-							if (task != null) {
-								TaskStatus status = getTaskStatus(task);
+                        for (EventBean task : eventBeans) {
+                            if (task != null) {
+                                TaskStatus status = getTaskStatus(task);
 
-								if (status == null
-										|| !status
-												.equals(TaskStatus.READY_FOR_PROCESSING))
-									continue;
+                                if (status == null
+                                        || !status
+                                                .equals(TaskStatus.READY_FOR_PROCESSING))
+                                    continue;
 
-								System.out.println("job id "
-										+ task.getUnderlying());
+                                System.out.println("job id "
+                                        + task.getUnderlying());
 
-								Long jobId = EventingUtils.getLong(task,
-										"jobId");
-								assertTrue(switches.get(jobId) >= 6L); // 3
-																		// cycles
-																		// =
-																		// 6
-																		// switches
-								semSwitches.release();
+                                Long jobId = EventingUtils.getLong(task,
+                                        "jobId");
+                                assertTrue(switches.get(jobId) >= 6L); // 3
+                                                                        // cycles
+                                                                        // =
+                                                                        // 6
+                                                                        // switches
+                                semSwitches.release();
 
-								break;
-							}
-						}
-					}
+                                break;
+                            }
+                        }
+                    }
 
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}, false);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }, false);
 
-		int total = 200;
-		for (int i = 0; i < total; i++) {
+        int total = 200;
+        for (int i = 0; i < total; i++) {
 
-			if (i % 10 == 0) {
-				// print checkpoint info
-				logCheckpoint((i / 10), startTime);
-			}
+            if (i % 10 == 0) {
+                // print checkpoint info
+                logCheckpoint((i / 10), startTime);
+            }
 
-			ITask tmp = null;
-			if (running.size() < total && Math.random() < 0.2) {
-				tmp = EventingFactory.createTask(running.size() + 1L, i + 1L,
-						TaskStatus.PROCESSING_NOT_POSSIBLE, "c1",
-						TaskComplexity.EASY);
-				test.addEvent(tmp);
-				running.add(tmp);
-				switches.put(tmp.getJobId(), 0L);
-			}
-			int randomFlip = (int) (Math.random() * (running.size()));
-			if (running.size() - 1 >= randomFlip && i > total / 10) {
-				// start flipping only after total/10 rounds
-				flipStatus(randomFlip);
-			}
-		}
+            ITask tmp = null;
+            if (running.size() < total && Math.random() < 0.2) {
+                tmp = EventingFactory.createTask(running.size() + 1L, i + 1L,
+                        TaskStatus.PROCESSING_NOT_POSSIBLE, "c1",
+                        TaskComplexity.EASY);
+                test.addEvent(tmp);
+                running.add(tmp);
+                switches.put(tmp.getJobId(), 0L);
+            }
+            int randomFlip = (int) (Math.random() * (running.size()));
+            if (running.size() - 1 >= randomFlip && i > total / 10) {
+                // start flipping only after total/10 rounds
+                flipStatus(randomFlip);
+            }
+        }
 
-		sleep(SHORT_WAIT); // wait for all events
+        sleep(SHORT_WAIT); // wait for all events
 
-		int expected = 0;
-		for (Long val : switches.values()) {
-			expected += val / 6;
-		}
-		logTimed("checking results: expecting " + expected + " switch events",
-				startTime);
-		assure(semSwitches, expected, expected
-				+ " taskDuration events expected!", ESPER_CHECK_TIMEOUT);
-	}
+        int expected = 0;
+        for (Long val : switches.values()) {
+            expected += val / 6;
+        }
+        logTimed("checking results: expecting " + expected + " switch events",
+                startTime);
+        assure(semSwitches, expected, expected
+                + " taskDuration events expected!", ESPER_CHECK_TIMEOUT);
+    }
 
-	/**
-	 * change from PROCESSING_NOT_POSSIBLE -> READY_FOR_PROCESSING and vice
-	 * versa also tracks the number of switches in {@code this.switches}
-	 * 
-	 * @param index
-	 *            the index in the running list
-	 */
-	private void flipStatus(int index) {
-		ITask tmp = running.get(index);
+    /**
+     * change from PROCESSING_NOT_POSSIBLE -> READY_FOR_PROCESSING and vice
+     * versa also tracks the number of switches in {@code this.switches}
+     * 
+     * @param index
+     *            the index in the running list
+     */
+    private void flipStatus(int index) {
+        ITask tmp = running.get(index);
 
-		if (tmp.getStatus() == TaskStatus.PROCESSING_NOT_POSSIBLE) {
-			tmp.setStatus(TaskStatus.READY_FOR_PROCESSING);
-		} else {
-			tmp.setStatus(TaskStatus.PROCESSING_NOT_POSSIBLE);
-		}
+        if (tmp.getStatus() == TaskStatus.PROCESSING_NOT_POSSIBLE) {
+            tmp.setStatus(TaskStatus.READY_FOR_PROCESSING);
+        } else {
+            tmp.setStatus(TaskStatus.PROCESSING_NOT_POSSIBLE);
+        }
 
-		synchronized (switches) {
-			switches.put(tmp.getJobId(), switches.get(tmp.getJobId()) + 1L);
-		}
-		System.out.println("" + tmp.getJobId() + " : "
-				+ switches.get(tmp.getJobId()));
-		test.addEvent(tmp);
-	}
+        synchronized (switches) {
+            switches.put(tmp.getJobId(), switches.get(tmp.getJobId()) + 1L);
+        }
+        System.out.println("" + tmp.getJobId() + " : "
+                + switches.get(tmp.getJobId()));
+        test.addEvent(tmp);
+    }
 }

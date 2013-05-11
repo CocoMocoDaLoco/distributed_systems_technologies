@@ -52,105 +52,105 @@ import dst.ass3.model.TaskStatus;
  */
 public class Test2 extends AbstractEventTest {
 
-	private Semaphore sem;
-	private StringWriter log4jWriter;
+    private Semaphore sem;
+    private StringWriter log4jWriter;
 
-	@Test
-	public void test_DTOUsed() {
-		final long startTime = System.currentTimeMillis();
-		this.log4jWriter = new StringWriter();
-		Appender appender = new WriterAppender(new SimpleLayout(), log4jWriter);
-		Logger.getRootLogger().addAppender(appender);
+    @Test
+    public void test_DTOUsed() {
+        final long startTime = System.currentTimeMillis();
+        this.log4jWriter = new StringWriter();
+        Appender appender = new WriterAppender(new SimpleLayout(), log4jWriter);
+        Logger.getRootLogger().addAppender(appender);
 
-		// DEBUG enable this to see the full log output
-		// Logger.getRootLogger().addAppender(new ConsoleAppender(new
-		// SimpleLayout()));
-		Logger.getRootLogger().setLevel((Level) Level.DEBUG);
+        // DEBUG enable this to see the full log output
+        // Logger.getRootLogger().addAppender(new ConsoleAppender(new
+        // SimpleLayout()));
+        Logger.getRootLogger().setLevel((Level) Level.DEBUG);
 
-		sem = new Semaphore(0);
+        sem = new Semaphore(0);
 
-		ITask t1 = EventingFactory.createTask(201L, 211L, TaskStatus.ASSIGNED,
-				"c1", TaskComplexity.EASY);
+        ITask t1 = EventingFactory.createTask(201L, 211L, TaskStatus.ASSIGNED,
+                "c1", TaskComplexity.EASY);
 
-		test.initializeAll(new StatementAwareUpdateListener() {
+        test.initializeAll(new StatementAwareUpdateListener() {
 
-			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents,
-					EPStatement s, EPServiceProvider p) {
-				System.out.println("LISTENER CALLED");
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents,
+                    EPStatement s, EPServiceProvider p) {
+                System.out.println("LISTENER CALLED");
 
-				for (EventBean e : newEvents) {
-					String name = e.getEventType().getName();
-					if (name.equals(Constants.EVENT_TASK_DURATION)) {
-						sem.release();
-					}
-				}
+                for (EventBean e : newEvents) {
+                    String name = e.getEventType().getName();
+                    if (name.equals(Constants.EVENT_TASK_DURATION)) {
+                        sem.release();
+                    }
+                }
 
-			}
-		}, true);
+            }
+        }, true);
 
-		sleep(SHORT_WAIT * 10); /*
-								 * wait 10 times longer than short waiting for
-								 * the log system to start up
-								 */
-		for (String logLine : getLogLine(".makeFilterSpec spec=FilterSpecCompiled")) {
-			Pattern p = Pattern
-					.compile("(dst3\\.messaging\\.([\\.a-zA-Z0-9])*)");
-			Matcher matcher = p.matcher(logLine);
-			if (matcher.find()) {
-				String clazzName = matcher.group(1);
-				try {
-					System.out.println("Checking persistence Annotations of "
-							+ clazzName);
-					Class<?> clazz = Class.forName(clazzName);
-					if (clazz.getAnnotation(Entity.class) != null) {
-						fail("Use only DTOs for Esper! (jpa annotation found in esper event class");
-					}
-					for (Field f : clazz.getFields()) {
-						for (Annotation a : f.getAnnotations()) {
-							if (a.getClass().getPackage().toString()
-									.startsWith("javax.persistence")) {
-								fail("Use only DTOs for Esper! (jpa annotation found in esper event class");
-							}
-						}
-					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		logCheckpoint(0, startTime);
-		test.addEvent(t1);
+        sleep(SHORT_WAIT * 10); /*
+                                 * wait 10 times longer than short waiting for
+                                 * the log system to start up
+                                 */
+        for (String logLine : getLogLine(".makeFilterSpec spec=FilterSpecCompiled")) {
+            Pattern p = Pattern
+                    .compile("(dst3\\.messaging\\.([\\.a-zA-Z0-9])*)");
+            Matcher matcher = p.matcher(logLine);
+            if (matcher.find()) {
+                String clazzName = matcher.group(1);
+                try {
+                    System.out.println("Checking persistence Annotations of "
+                            + clazzName);
+                    Class<?> clazz = Class.forName(clazzName);
+                    if (clazz.getAnnotation(Entity.class) != null) {
+                        fail("Use only DTOs for Esper! (jpa annotation found in esper event class");
+                    }
+                    for (Field f : clazz.getFields()) {
+                        for (Annotation a : f.getAnnotations()) {
+                            if (a.getClass().getPackage().toString()
+                                    .startsWith("javax.persistence")) {
+                                fail("Use only DTOs for Esper! (jpa annotation found in esper event class");
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        logCheckpoint(0, startTime);
+        test.addEvent(t1);
 
-		logCheckpoint(1, startTime);
-		t1.setStatus(TaskStatus.PROCESSED);
-		test.addEvent(t1);
+        logCheckpoint(1, startTime);
+        t1.setStatus(TaskStatus.PROCESSED);
+        test.addEvent(t1);
 
-		logTimed("checking results", startTime);
-		assure(sem, 1, "1 taskDuration event expected!", ESPER_CHECK_TIMEOUT); // expect
-		// TaskDuration
-		// event
+        logTimed("checking results", startTime);
+        assure(sem, 1, "1 taskDuration event expected!", ESPER_CHECK_TIMEOUT); // expect
+        // TaskDuration
+        // event
 
-	}
+    }
 
-	public Collection<String> getLogLine(String... parts) {
-		Collection<String> ret = new ArrayList<String>();
-		log4jWriter.flush();
-		String log4j = log4jWriter.toString();
-		String lines[] = log4j.split("\n");
-		for (String line : lines) {
-			boolean contains = true;
-			for (String part : parts) {
-				if (!line.contains(part)) {
-					contains = false;
-					break;
-				}
-				if (contains) {
-					// System.out.println("found LINE: "+line);
-					ret.add(line);
-				}
-			}
-		}
-		return ret;
-	}
+    public Collection<String> getLogLine(String... parts) {
+        Collection<String> ret = new ArrayList<String>();
+        log4jWriter.flush();
+        String log4j = log4jWriter.toString();
+        String lines[] = log4j.split("\n");
+        for (String line : lines) {
+            boolean contains = true;
+            for (String part : parts) {
+                if (!line.contains(part)) {
+                    contains = false;
+                    break;
+                }
+                if (contains) {
+                    // System.out.println("found LINE: "+line);
+                    ret.add(line);
+                }
+            }
+        }
+        return ret;
+    }
 }
