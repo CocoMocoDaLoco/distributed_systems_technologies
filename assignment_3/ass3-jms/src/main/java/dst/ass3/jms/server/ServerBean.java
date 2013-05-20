@@ -19,6 +19,7 @@ import javax.jms.Topic;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import dst.ass3.dto.ProcessTaskDTO;
 import dst.ass3.dto.RateTaskDTO;
 import dst.ass3.dto.TaskDTO;
 import dst.ass3.jms.Names;
@@ -91,8 +92,49 @@ public class ServerBean implements MessageListener {
             case Names.MSG_SCHED_INFO:
                 handleSchedInfo(m.getObject());
                 break;
+            case Names.MSG_CLUSTER_DECISION:
+                handleClusterDecision(m.getObject());
+                break;
             default:
                 System.err.printf("Invalid message type received: %d%n", type);
+            }
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleClusterDecision(Serializable object) {
+        final RateTaskDTO dto = (RateTaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        final ITask task = getTask(dto.getId());
+
+        /* Persist to DB. */
+
+        task.setComplexity(dto.getComplexity());
+        task.setStatus(dto.getStatus());
+        task.setRatedBy(dto.getRatedBy());
+
+        entityManager.persist(task);
+
+        try {
+            if (dto.getStatus() == TaskStatus.READY_FOR_PROCESSING) {
+                /* Forward to computers. */
+
+                final ProcessTaskDTO ptDTO = new ProcessTaskDTO(task);
+                final ObjectMessage sm = session.createObjectMessage(ptDTO);
+                sm.setIntProperty(Names.PROP_TYPE, Names.MSG_SRV_ASSIGN);
+                computerProducer.send(sm);
+            } else {
+                /* Notify scheduler. */
+
+                final TaskDTO schedDTO = new TaskDTO(task);
+                final ObjectMessage sm = session.createObjectMessage(schedDTO);
+                sm.setIntProperty(Names.PROP_TYPE, Names.MSG_SRV_DENIED);
+                schedulerProducer.send(sm);
             }
         } catch (JMSException e) {
             e.printStackTrace();
@@ -106,9 +148,7 @@ public class ServerBean implements MessageListener {
             return;
         }
 
-        final ITask task = entityManager.createQuery("from Task where id = :id", ITask.class)
-                .setParameter("id", dto.getId())
-                .getSingleResult();
+        final ITask task = getTask(dto.getId());
 
         try {
             /* Reply to scheduler. */
@@ -120,6 +160,12 @@ public class ServerBean implements MessageListener {
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    private ITask getTask(long id) {
+        return entityManager.createQuery("from Task where id = :id", ITask.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
     private void handleSchedCreate(Serializable o) {

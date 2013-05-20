@@ -74,12 +74,29 @@ public class Scheduler implements IScheduler {
             case Names.MSG_SRV_INFO:
                 handleSrvInfo(m.getObject());
                 break;
+            case Names.MSG_SRV_DENIED:
+                handleSrvDenied(m.getObject());
+                break;
             default:
                 System.err.printf("Invalid message type received: %d%n", type);
             }
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleSrvDenied(Serializable object) {
+        final TaskDTO dto = (TaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        if (listener == null) {
+            return;
+        }
+
+        listener.notify(InfoType.DENIED, dto);
     }
 
     private void handleSrvInfo(Serializable object) {

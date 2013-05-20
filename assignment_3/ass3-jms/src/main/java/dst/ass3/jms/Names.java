@@ -15,6 +15,9 @@ public class Names {
     public static final int MSG_SRV_DECIDE = 2;
     public static final int MSG_SCHED_INFO = 3;
     public static final int MSG_SRV_INFO = 4;
+    public static final int MSG_CLUSTER_DECISION = 5;
+    public static final int MSG_SRV_DENIED = 6;
+    public static final int MSG_SRV_ASSIGN = 7;
 
     private Names() { }
 }
