@@ -9,7 +9,10 @@ public class Names {
 
     public static final String COMPUTER_TOPIC = "queue.dst.ComputerTopic";
 
-    public static final String PROP_TYPE = "MESSAGE_TYPE";
+    public static final String PROP_CLUSTER = "PROP_CLUSTER";
+    public static final String PROP_COMPLEXITY = "PROP_COMPLEXITY";
+    public static final String PROP_TYPE = "PROP_TYPE";
+
     public static final int MSG_SCHED_CREATE = 0;
     public static final int MSG_SRV_CREATED = 1;
     public static final int MSG_SRV_DECIDE = 2;
@@ -18,6 +21,8 @@ public class Names {
     public static final int MSG_CLUSTER_DECISION = 5;
     public static final int MSG_SRV_DENIED = 6;
     public static final int MSG_SRV_ASSIGN = 7;
+    public static final int MSG_COMP_PROCESSED = 8;
+    public static final int MSG_SRV_PROCESSED = 9;
 
     private Names() { }
 }

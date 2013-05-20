@@ -95,9 +95,39 @@ public class ServerBean implements MessageListener {
             case Names.MSG_CLUSTER_DECISION:
                 handleClusterDecision(m.getObject());
                 break;
+            case Names.MSG_COMP_PROCESSED:
+                handleCompProcessed(m.getObject());
+                break;
             default:
                 System.err.printf("Invalid message type received: %d%n", type);
             }
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleCompProcessed(Serializable object) {
+        final ProcessTaskDTO dto = (ProcessTaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        final ITask task = getTask(dto.getId());
+
+        /* Persist to DB. */
+
+        task.setStatus(dto.getStatus());
+
+        entityManager.persist(task);
+
+        try {
+            /* Notify scheduler. */
+
+            final TaskDTO schedDTO = new TaskDTO(task);
+            final ObjectMessage sm = session.createObjectMessage(schedDTO);
+            sm.setIntProperty(Names.PROP_TYPE, Names.MSG_SRV_PROCESSED);
+            schedulerProducer.send(sm);
         } catch (JMSException e) {
             e.printStackTrace();
         }
@@ -127,6 +157,8 @@ public class ServerBean implements MessageListener {
                 final ProcessTaskDTO ptDTO = new ProcessTaskDTO(task);
                 final ObjectMessage sm = session.createObjectMessage(ptDTO);
                 sm.setIntProperty(Names.PROP_TYPE, Names.MSG_SRV_ASSIGN);
+                sm.setStringProperty(Names.PROP_CLUSTER, dto.getRatedBy());
+                sm.setStringProperty(Names.PROP_COMPLEXITY, dto.getComplexity().toString());
                 computerProducer.send(sm);
             } else {
                 /* Notify scheduler. */
