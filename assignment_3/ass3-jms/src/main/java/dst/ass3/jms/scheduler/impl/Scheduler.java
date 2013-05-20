@@ -1,9 +1,13 @@
 package dst.ass3.jms.scheduler.impl;
 
+import java.io.Serializable;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
@@ -14,6 +18,7 @@ import javax.naming.NamingException;
 import dst.ass3.dto.TaskDTO;
 import dst.ass3.jms.Names;
 import dst.ass3.jms.scheduler.IScheduler;
+import dst.ass3.jms.scheduler.IScheduler.ISchedulerListener.InfoType;
 
 public class Scheduler implements IScheduler {
 
@@ -38,6 +43,12 @@ public class Scheduler implements IScheduler {
             messageProducer = session.createProducer(qout);
 
             messageConsumer = session.createConsumer(qin);
+            messageConsumer.setMessageListener(new MessageListener() {
+                @Override
+                public void onMessage(Message message) {
+                    Scheduler.this.onMessage(message);
+                }
+            });
 
             connection.start();
         } catch (JMSException e) {
@@ -45,6 +56,41 @@ public class Scheduler implements IScheduler {
         } catch (NamingException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void onMessage(Message message) {
+        ObjectMessage m = (ObjectMessage)message;
+        if (m == null) {
+            System.err.printf("Invalid message received: %s%n", message);
+            return;
+        }
+
+        try {
+            final int type = m.getIntProperty(Names.PROP_TYPE);
+            switch (type) {
+            case Names.MSG_SRV_CREATED:
+                handleSrvCreated(m.getObject());
+                break;
+            default:
+                System.err.printf("Invalid message type received: %d%n", type);
+            }
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleSrvCreated(Serializable object) {
+        final TaskDTO dto = (TaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        if (listener == null) {
+            return;
+        }
+
+        listener.notify(InfoType.CREATED, dto);
     }
 
     @Override
