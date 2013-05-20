@@ -11,6 +11,8 @@ public class Names {
 
     public static final String PROP_TYPE = "MESSAGE_TYPE";
     public static final int MSG_SCHED_CREATE = 0;
+    public static final int MSG_SRV_CREATED = 1;
+    public static final int MSG_SRV_DECIDE = 2;
 
     private Names() { }
 }
