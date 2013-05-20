@@ -6,7 +6,6 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -39,14 +38,11 @@ public class Computer implements IComputer {
             InitialContext ctx = new InitialContext();
             ConnectionFactory connectionFactory = (ConnectionFactory)
                     ctx.lookup(Names.CONNECTION_FACTORY);
-            Queue queue = (Queue)ctx.lookup(Names.DEMO_QUEUE);
+            Queue queue = (Queue)ctx.lookup(Names.SERVER_QUEUE);
 
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             messageProducer = session.createProducer(queue);
-
-            TextMessage tm = session.createTextMessage("Hello World");
-            messageProducer.send(tm);
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (NamingException e) {
@@ -56,13 +52,9 @@ public class Computer implements IComputer {
 
     @Override
     public void stop() {
-        try {
-            messageProducer.close();
-            session.close();
-            connection.close();
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
+        try { messageProducer.close(); } catch (JMSException e) { e.printStackTrace(); }
+        try { session.close(); } catch (JMSException e) { e.printStackTrace(); }
+        try { connection.close(); } catch (JMSException e) { e.printStackTrace(); }
     }
 
     @Override
