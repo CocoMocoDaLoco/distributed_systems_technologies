@@ -9,5 +9,8 @@ public class Names {
 
     public static final String COMPUTER_TOPIC = "queue.dst.ComputerTopic";
 
+    public static final String PROP_TYPE = "MESSAGE_TYPE";
+    public static final int MSG_SCHED_CREATE = 0;
+
     private Names() { }
 }

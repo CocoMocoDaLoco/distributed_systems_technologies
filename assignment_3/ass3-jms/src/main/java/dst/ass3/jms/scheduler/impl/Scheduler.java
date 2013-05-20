@@ -5,11 +5,13 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import dst.ass3.dto.TaskDTO;
 import dst.ass3.jms.Names;
 import dst.ass3.jms.scheduler.IScheduler;
 
@@ -53,8 +55,16 @@ public class Scheduler implements IScheduler {
 
     @Override
     public void assign(long jobId) {
-        // TODO Auto-generated method stub
+        TaskDTO dto = new TaskDTO();
+        dto.setJobId(jobId);
 
+        try {
+            ObjectMessage msg = session.createObjectMessage(dto);
+            msg.setIntProperty(Names.PROP_TYPE, Names.MSG_SCHED_CREATE);
+            messageProducer.send(msg);
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
