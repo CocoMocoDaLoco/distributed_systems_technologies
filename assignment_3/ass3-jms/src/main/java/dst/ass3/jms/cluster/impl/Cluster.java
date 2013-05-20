@@ -50,7 +50,7 @@ public class Cluster implements ICluster {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             messageProducer = session.createProducer(qout);
 
-            /* TODO: How to ensure only one listener gets each message? */
+            /* TODO: How to disconnect from queue? */
 
             messageConsumer = session.createConsumer(clusterQueue);
             messageConsumer.setMessageListener(new MessageListener() {
@@ -101,9 +101,6 @@ public class Cluster implements ICluster {
         }
 
         try {
-            messageConsumer.close();
-            messageConsumer = null;
-
             TaskDecideResponse decision = listener.decideTask(dto, name);
 
             dto.setRatedBy(name);
@@ -119,18 +116,6 @@ public class Cluster implements ICluster {
             messageProducer.send(msg);
         } catch (JMSException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                messageConsumer = session.createConsumer(clusterQueue);
-                messageConsumer.setMessageListener(new MessageListener() {
-                    @Override
-                    public void onMessage(Message message) {
-                        Cluster.this.onMessage(message);
-                    }
-                });
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
         }
     }
 
