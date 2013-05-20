@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import dst.ass3.dto.RateTaskDTO;
 import dst.ass3.dto.TaskDTO;
 import dst.ass3.jms.Names;
+import dst.ass3.model.ITask;
 import dst.ass3.model.Task;
 import dst.ass3.model.TaskComplexity;
 import dst.ass3.model.TaskStatus;
@@ -87,9 +88,35 @@ public class ServerBean implements MessageListener {
             case Names.MSG_SCHED_CREATE:
                 handleSchedCreate(m.getObject());
                 break;
+            case Names.MSG_SCHED_INFO:
+                handleSchedInfo(m.getObject());
+                break;
             default:
                 System.err.printf("Invalid message type received: %d%n", type);
             }
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleSchedInfo(Serializable object) {
+        final TaskDTO dto = (TaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        final ITask task = entityManager.createQuery("from Task where id = :id", ITask.class)
+                .setParameter("id", dto.getId())
+                .getSingleResult();
+
+        try {
+            /* Reply to scheduler. */
+
+            final TaskDTO schedDTO = new TaskDTO(task);
+            final ObjectMessage sm = session.createObjectMessage(schedDTO);
+            sm.setIntProperty(Names.PROP_TYPE, Names.MSG_SRV_INFO);
+            schedulerProducer.send(sm);
         } catch (JMSException e) {
             e.printStackTrace();
         }

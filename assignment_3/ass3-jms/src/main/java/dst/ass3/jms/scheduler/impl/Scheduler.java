@@ -71,12 +71,29 @@ public class Scheduler implements IScheduler {
             case Names.MSG_SRV_CREATED:
                 handleSrvCreated(m.getObject());
                 break;
+            case Names.MSG_SRV_INFO:
+                handleSrvInfo(m.getObject());
+                break;
             default:
                 System.err.printf("Invalid message type received: %d%n", type);
             }
         } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleSrvInfo(Serializable object) {
+        final TaskDTO dto = (TaskDTO)object;
+        if (dto == null) {
+            System.err.println("Invalid body received");
+            return;
+        }
+
+        if (listener == null) {
+            return;
+        }
+
+        listener.notify(InfoType.INFO, dto);
     }
 
     private void handleSrvCreated(Serializable object) {
@@ -117,8 +134,16 @@ public class Scheduler implements IScheduler {
 
     @Override
     public void info(long taskId) {
-        // TODO Auto-generated method stub
+        TaskDTO dto = new TaskDTO();
+        dto.setId(taskId);
 
+        try {
+            ObjectMessage msg = session.createObjectMessage(dto);
+            msg.setIntProperty(Names.PROP_TYPE, Names.MSG_SCHED_INFO);
+            messageProducer.send(msg);
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

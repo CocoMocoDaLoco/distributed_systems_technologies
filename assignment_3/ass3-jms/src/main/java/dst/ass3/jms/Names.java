@@ -13,6 +13,8 @@ public class Names {
     public static final int MSG_SCHED_CREATE = 0;
     public static final int MSG_SRV_CREATED = 1;
     public static final int MSG_SRV_DECIDE = 2;
+    public static final int MSG_SCHED_INFO = 3;
+    public static final int MSG_SRV_INFO = 4;
 
     private Names() { }
 }
