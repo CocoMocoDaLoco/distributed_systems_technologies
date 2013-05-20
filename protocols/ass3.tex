@@ -1,0 +1,67 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{comment}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{Gray}{gray}{0.5}
+
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{OliveGreen},
+    commentstyle=\color{Gray},
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    showspaces=false,
+    showtabs=false,
+    numbers=left,
+}
+
+\title{VU Distributed Systems Technologies \\
+       SS 2013 \\
+       Assignment 3}
+\author{Jakob Gruber, 0203440}
+
+\begin{document}
+
+\maketitle
+
+\section{Notes}
+
+\section{Theory}
+
+\subsection{Class loading (1 point)}
+
+\emph{Explain the concept of class loading in Java. What different types of class loaders do exist and how do
+they relate to each other? How is a class identified in this process? What are the reasons for developers
+to write their own class loaders?}
+
+\vspace{3mm}
+
+\subsection{AOP Fundamentals (2 points)}
+
+\emph{Explain the concept of Aspect Oriented Programming (AOP). Think of typical usage scenarios. What
+are aspects, concerns, pointcuts and joinpoints, and how do these concepts relate to each other?
+Why is it so important to write minimally matching pointcut definitions?}
+
+\vspace{3mm}
+
+\subsection{Weaving Times in AspectJ (1 point)}
+
+\emph{What happens during weaving in AOP? At what times can weaving happen in AspectJ? Think about
+advantages and disadvantages of different weaving times.}
+
+\vspace{3mm}
+
+\subsection{Esper Processing Model (2 point)}
+
+\emph{Study the details of the Esper processing model (available in the online reference of Esper). Describe the
+core API elements, and illustrate the main EPL query types based on an exemplary event timeline.}
+
+\vspace{3mm}
+
+\end{document}
