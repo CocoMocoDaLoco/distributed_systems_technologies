@@ -3,6 +3,7 @@ package dst.ass3.jms.scheduler.impl;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
@@ -19,6 +20,7 @@ public class Scheduler implements IScheduler {
     private Connection connection;
     private Session session;
     private MessageProducer messageProducer;
+    private MessageConsumer messageConsumer;
 
     @Override
     public void start() {
@@ -26,11 +28,14 @@ public class Scheduler implements IScheduler {
             InitialContext ctx = new InitialContext();
             ConnectionFactory connectionFactory = (ConnectionFactory)
                     ctx.lookup(Names.CONNECTION_FACTORY);
-            Queue queue = (Queue)ctx.lookup(Names.SERVER_QUEUE);
+            Queue qout = (Queue)ctx.lookup(Names.SERVER_QUEUE);
+            Queue qin = (Queue)ctx.lookup(Names.SCHEDULER_QUEUE);
 
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            messageProducer = session.createProducer(queue);
+            messageProducer = session.createProducer(qout);
+
+            messageConsumer = session.createConsumer(qin);
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (NamingException e) {
@@ -40,6 +45,7 @@ public class Scheduler implements IScheduler {
 
     @Override
     public void stop() {
+        try { messageConsumer.close(); } catch (JMSException e) { e.printStackTrace(); }
         try { messageProducer.close(); } catch (JMSException e) { e.printStackTrace(); }
         try { session.close(); } catch (JMSException e) { e.printStackTrace(); }
         try { connection.close(); } catch (JMSException e) { e.printStackTrace(); }
