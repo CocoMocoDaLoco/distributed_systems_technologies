@@ -51,6 +51,8 @@ public class Computer implements IComputer {
             messageProducer = session.createProducer(queue);
 
             messageConsumer = session.createDurableSubscriber(topic, name);
+
+            connection.start();
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (NamingException e) {

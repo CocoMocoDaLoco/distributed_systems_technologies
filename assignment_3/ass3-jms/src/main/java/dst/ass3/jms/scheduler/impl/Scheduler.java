@@ -38,6 +38,8 @@ public class Scheduler implements IScheduler {
             messageProducer = session.createProducer(qout);
 
             messageConsumer = session.createConsumer(qin);
+
+            connection.start();
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (NamingException e) {

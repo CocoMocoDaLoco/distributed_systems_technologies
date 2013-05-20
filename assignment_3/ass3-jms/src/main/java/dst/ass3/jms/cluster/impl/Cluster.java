@@ -41,6 +41,8 @@ public class Cluster implements ICluster {
             messageProducer = session.createProducer(qout);
 
             messageConsumer = session.createConsumer(qin);
+
+            connection.start();
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (NamingException e) {

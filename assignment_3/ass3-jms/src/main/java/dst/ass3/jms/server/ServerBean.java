@@ -57,6 +57,8 @@ public class ServerBean implements MessageListener {
             clusterProducer = session.createProducer(clusterQueue);
             schedulerProducer = session.createProducer(schedulerQueue);
             computerProducer = session.createProducer(computerTopic);
+
+            connection.start();
         } catch (JMSException e) {
             e.printStackTrace();
         }
