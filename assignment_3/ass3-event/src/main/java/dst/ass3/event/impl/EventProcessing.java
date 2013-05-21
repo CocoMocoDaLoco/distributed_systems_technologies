@@ -41,10 +41,10 @@ public class EventProcessing implements IEventProcessing {
         EPAdministrator administrator = serviceProvider.getEPAdministrator();
 
         createTypes(listener, administrator);
-        createQueries(administrator);
+        createQueries(listener, administrator);
     }
 
-    private void createQueries(EPAdministrator administrator) {
+    private void createQueries(StatementAwareUpdateListener listener, EPAdministrator administrator) {
         String epl = String.format("insert into %s (jobId, timestamp) " +
                             "select jobId, current_timestamp() " +
                             "from %s " +
@@ -84,6 +84,21 @@ public class EventProcessing implements IEventProcessing {
                 Constants.EVENT_AVG_TASK_DURATION,
                 Constants.EVENT_TASK_DURATION);
         administrator.createEPL(epl);
+
+        /* TODO: Fix this query for cases such as P N P N P N P N
+         * (https://tuwel.tuwien.ac.at/mod/forum/discuss.php?d=43464). */
+
+        String pattern = String.format("every r1=%1$s(status = %2$s.%3$s) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id) -> " +
+                                       "         %1$s(status = %2$s.%3$s, id = r1.id) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id) -> " +
+                                       "         %1$s(status = %2$s.%3$s, id = r1.id) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id)",
+                EVENT_TASK,
+                TaskStatus.class.getSimpleName(),
+                TaskStatus.READY_FOR_PROCESSING.toString(),
+                TaskStatus.PROCESSING_NOT_POSSIBLE.toString());
+        administrator.createPattern(pattern).addListener(listener);
     }
 
     private void createTypes(StatementAwareUpdateListener listener, EPAdministrator administrator) {
