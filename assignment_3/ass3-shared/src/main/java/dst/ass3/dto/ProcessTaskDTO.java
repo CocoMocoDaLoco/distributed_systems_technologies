@@ -79,7 +79,7 @@ public class ProcessTaskDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "Task [id=" + id + ", jobId=" + jobId + ", ratedBy=" + ratedBy
+        return "ProcessTaskDTO [id=" + id + ", jobId=" + jobId + ", ratedBy=" + ratedBy
                 + ", status=" + status + ", complexity=" + complexity + "]";
     }
 

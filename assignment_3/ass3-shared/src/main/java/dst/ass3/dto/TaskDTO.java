@@ -79,7 +79,7 @@ public class TaskDTO implements Serializable, ITask {
 
     @Override
     public String toString() {
-        return "Task [id=" + id + ", jobId=" + jobId + ", ratedBy=" + ratedBy
+        return "TaskDTO [id=" + id + ", jobId=" + jobId + ", ratedBy=" + ratedBy
                 + ", complexity=" + complexity + ", status=" + status + "]";
     }
 

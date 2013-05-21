@@ -85,6 +85,7 @@ public class ServerBean implements MessageListener {
 
         try {
             final int type = m.getIntProperty(Names.PROP_TYPE);
+            System.out.printf("Received message: {%d, %s}%n", type, m.getObject());
             switch (type) {
             case Names.MSG_SCHED_CREATE:
                 handleSchedCreate(m.getObject());
