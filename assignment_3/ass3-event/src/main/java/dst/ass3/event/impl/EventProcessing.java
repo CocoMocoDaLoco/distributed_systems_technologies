@@ -5,6 +5,8 @@ import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
 
 import dst.ass3.dto.TaskDTO;
@@ -96,7 +98,9 @@ public class EventProcessing implements IEventProcessing {
         administrator.createEPL(epl);
 
         epl = String.format("select * from %s", Constants.EVENT_TASK_DURATION);
-        administrator.createEPL(epl).addListener(listener);
+        EPStatement statement = administrator.createEPL(epl);
+        statement.addListener(listener);
+        statement.addListener(new PrintListener());
     }
 
     @Override
@@ -110,6 +114,16 @@ public class EventProcessing implements IEventProcessing {
 
         serviceProvider.destroy();
         serviceProvider = null;
+    }
+
+    private static class PrintListener implements StatementAwareUpdateListener {
+        @Override
+        public void update(EventBean[] newEvents, EventBean[] oldEvents, EPStatement statement,
+                EPServiceProvider epServiceProvider) {
+            for (EventBean e : newEvents) {
+                System.out.println(e);
+            }
+        }
     }
 
 }
