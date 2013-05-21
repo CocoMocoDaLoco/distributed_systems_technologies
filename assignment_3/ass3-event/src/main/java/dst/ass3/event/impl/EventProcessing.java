@@ -76,6 +76,14 @@ public class EventProcessing implements IEventProcessing {
                 Constants.EVENT_TASK_PROCESSED,
                 WINDOW_SIZE);
         administrator.createEPL(epl);
+
+        epl = String.format("insert into %s (%s) " +
+                            "select avg(duration) " +
+                            "from %s.win:time(15 seconds)",
+                Constants.EVENT_AVG_TASK_DURATION,
+                Constants.EVENT_AVG_TASK_DURATION,
+                Constants.EVENT_TASK_DURATION);
+        administrator.createEPL(epl);
     }
 
     private void createTypes(StatementAwareUpdateListener listener, EPAdministrator administrator) {
@@ -101,6 +109,14 @@ public class EventProcessing implements IEventProcessing {
         EPStatement statement = administrator.createEPL(epl);
         statement.addListener(listener);
         statement.addListener(new PrintListener());
+
+        epl = String.format("create schema %s as (%s double)",
+                Constants.EVENT_AVG_TASK_DURATION,
+                Constants.EVENT_AVG_TASK_DURATION);
+        administrator.createEPL(epl);
+
+        epl = String.format("select * from %s", Constants.EVENT_AVG_TASK_DURATION);
+        administrator.createEPL(epl).addListener(listener);
     }
 
     @Override
