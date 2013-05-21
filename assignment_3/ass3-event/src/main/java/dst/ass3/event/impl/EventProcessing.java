@@ -11,10 +11,13 @@ import dst.ass3.dto.TaskDTO;
 import dst.ass3.event.Constants;
 import dst.ass3.event.IEventProcessing;
 import dst.ass3.model.ITask;
+import dst.ass3.model.TaskStatus;
 
 public class EventProcessing implements IEventProcessing {
 
     private static final String PROVIDER_NAME = "EsperEngineDST";
+    private static final String EVENT_TASK = "Task";
+    private static final int WINDOW_SIZE = 10000;
 
     private EPServiceProvider serviceProvider;
     private EPRuntime runtime;
@@ -22,7 +25,8 @@ public class EventProcessing implements IEventProcessing {
     @Override
     public void initializeAll(StatementAwareUpdateListener listener, boolean debug) {
         Configuration config = new Configuration();
-        config.addEventType(TaskDTO.class);
+        config.addEventType(EVENT_TASK, TaskDTO.class);
+        config.addImport(TaskStatus.class);
 
         if (debug) {
             config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
@@ -34,16 +38,64 @@ public class EventProcessing implements IEventProcessing {
         runtime = serviceProvider.getEPRuntime();
         EPAdministrator administrator = serviceProvider.getEPAdministrator();
 
+        createTypes(listener, administrator);
+        createQueries(administrator);
+    }
+
+    private void createQueries(EPAdministrator administrator) {
+        String epl = String.format("insert into %s (jobId, timestamp) " +
+                            "select jobId, current_timestamp() " +
+                            "from %s " +
+                            "where status = %s.%s",
+                Constants.EVENT_TASK_ASSIGNED,
+                EVENT_TASK,
+                TaskStatus.class.getSimpleName(),
+                TaskStatus.ASSIGNED.toString());
+        administrator.createEPL(epl);
+
+        epl = String.format("insert into %s (jobId, timestamp) " +
+                            "select jobId, current_timestamp() " +
+                            "from %s " +
+                            "where status = %s.%s",
+                Constants.EVENT_TASK_PROCESSED,
+                EVENT_TASK,
+                TaskStatus.class.getSimpleName(),
+                TaskStatus.PROCESSED.toString());
+        administrator.createEPL(epl);
+
+        epl = String.format("insert into %s (jobId, duration) " +
+                            "select a.jobId, b.timestamp - a.timestamp " +
+                            "from %s.win:length(%d) a, " +
+                            "     %s.win:length(%d) b " +
+                            "where a.jobId = b.jobId",
+                Constants.EVENT_TASK_DURATION,
+                Constants.EVENT_TASK_ASSIGNED,
+                WINDOW_SIZE,
+                Constants.EVENT_TASK_PROCESSED,
+                WINDOW_SIZE);
+        administrator.createEPL(epl);
+    }
+
+    private void createTypes(StatementAwareUpdateListener listener, EPAdministrator administrator) {
         String epl = String.format("create schema %s as (jobId long, timestamp long)",
                 Constants.EVENT_TASK_ASSIGNED);
+        administrator.createEPL(epl);
+
+        epl = String.format("select * from %s", Constants.EVENT_TASK_ASSIGNED);
         administrator.createEPL(epl).addListener(listener);
 
         epl = String.format("create schema %s as (jobId long, timestamp long)",
                 Constants.EVENT_TASK_PROCESSED);
+        administrator.createEPL(epl);
+
+        epl = String.format("select * from %s", Constants.EVENT_TASK_PROCESSED);
         administrator.createEPL(epl).addListener(listener);
 
         epl = String.format("create schema %s as (jobId long, duration long)",
                 Constants.EVENT_TASK_DURATION);
+        administrator.createEPL(epl);
+
+        epl = String.format("select * from %s", Constants.EVENT_TASK_DURATION);
         administrator.createEPL(epl).addListener(listener);
     }
 
