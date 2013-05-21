@@ -1,9 +1,10 @@
 package dst.ass3.event;
 
+import dst.ass3.dto.TaskDTO;
+import dst.ass3.event.impl.EventProcessing;
 import dst.ass3.model.ITask;
 import dst.ass3.model.TaskComplexity;
 import dst.ass3.model.TaskStatus;
-import dst.ass3.dto.TaskDTO;
 
 /**
  * Factory for instantiating objects used in the eventing tests
@@ -11,12 +12,8 @@ import dst.ass3.dto.TaskDTO;
  */
 public class EventingFactory {
 
-
     public static IEventProcessing getInstance() {
-
-        // TODO
-
-        return null;
+        return new EventProcessing();
     }
 
     public static ITask createTask(Long id, Long jobId, TaskStatus status,
