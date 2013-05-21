@@ -122,10 +122,10 @@ public class Computer implements IComputer {
 
     @Override
     public void stop() {
-        try { messageConsumer.close(); } catch (JMSException e) { e.printStackTrace(); }
-        try { messageProducer.close(); } catch (JMSException e) { e.printStackTrace(); }
-        try { session.unsubscribe(name); session.close(); } catch (JMSException e) { e.printStackTrace(); }
-        try { connection.close(); } catch (JMSException e) { e.printStackTrace(); }
+        try { if (messageConsumer != null) messageConsumer.close(); } catch (JMSException e) { e.printStackTrace(); }
+        try { if (messageProducer != null) messageProducer.close(); } catch (JMSException e) { e.printStackTrace(); }
+        try { if (session != null){ session.unsubscribe(name); session.close(); } } catch (JMSException e) { e.printStackTrace(); }
+        try { if (connection != null) connection.close(); } catch (JMSException e) { e.printStackTrace(); }
     }
 
     @Override
