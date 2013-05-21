@@ -30,16 +30,6 @@
 
 \maketitle
 
-\section{Notes}
-
-\subsection{Esper}
-
-\emph{Use the Esper
-reference to get familiar with some of the additional core concepts (e.g., contexts). During the interview
-sessions you should be prepared to report on your experiences with CEP and the strengths/weaknesses
-of Esper. Also, think about the core differences of the Esper processing model as opposed to querying a
-standard database like MySQL.}
-
 \vspace{3mm}
 
 \section{Theory}
@@ -52,6 +42,21 @@ to write their own class loaders?}
 
 \vspace{3mm}
 
+Class loaders are responsible for locating libraries, reading their contents,
+and loading the classes contained within the libraries. When the JVM is
+started, the following class loaders are used: the bootstrap class loader (core
+Java libraries, written in native code), the extensions class loader, and the
+system class loader (maps to the system's CLASSPATH). These classloaders are hierarchical
+and can load classes from one level above its hierarchy.
+
+A class load first checks if the requested class is already known by itself
+or its parents. If not, it uses its own method to find the class bytecode; for example,
+the standard class loader checks for class files in the CLASSPATH.
+ 
+Custom class loaders can be used to load and unload classes at runtime, load
+classes from various locations (even remotely), load classes from encrypted
+bytecode, and modify the loaded bytecode (AspectJ, injection).
+
 \subsection{AOP Fundamentals (2 points)}
 
 \emph{Explain the concept of Aspect Oriented Programming (AOP). Think of typical usage scenarios. What
@@ -60,6 +65,16 @@ Why is it so important to write minimally matching pointcut definitions?}
 
 \vspace{3mm}
 
+Aspects are anything that cannot be encapsulated into methods or classes such as logging, profiling,
+debugging information, error handling, persistence, etc.
+
+Joinpoints are well defined places within the program flow (\lstinline|call(void C.x())|).
+Pointcuts can aggregate joinpoints. An advice is code that's executed when a pointcut is reached.
+Aspects encapsulate advices together with joinpoints and pointcuts.
+
+If a pointcut is kept as general as possible, future changes and additional methods
+might fit into the same definition without requiring further changes to the pointcut.
+
 \subsection{Weaving Times in AspectJ (1 point)}
 
 \emph{What happens during weaving in AOP? At what times can weaving happen in AspectJ? Think about
@@ -67,11 +82,54 @@ advantages and disadvantages of different weaving times.}
 
 \vspace{3mm}
 
+Advice code is injected into the class definitions during weaving. This can
+occur at compile-time (dedicated AspectJ compiler), at post-compile time
+(inject into already compiled bytecode), or at load-time (inject during class
+loading).
+
+Injecting at load-time slows down program execution, while compile-time weaving
+doesn't. However, compile-time weaving does not have access to run-time information.
+
 \subsection{Esper Processing Model (2 point)}
 
 \emph{Study the details of the Esper processing model (available in the online reference of Esper). Describe the
 core API elements, and illustrate the main EPL query types based on an exemplary event timeline.}
 
+\begin{comment}
+Use the Esper reference to get familiar with some of the additional core
+concepts (e.g., contexts). During the interview sessions you should be prepared
+to report on your experiences with CEP and the strengths/weaknesses of Esper.
+Also, think about the core differences of the Esper processing model as opposed
+to querying a standard database like MySQL.
+\end{comment}
+
 \vspace{3mm}
+
+Events can be received by \lstinline|UpdateListener| classes. Results are
+wrapped in \lstinline|EventBean| instances. New arriving events are also termed
+the \emph{Insert Stream}.  Events leaving the context of a query are placed
+into the \emph{Remove Stream}. Streams may be filtered by using a
+\lstinline|WHERE| or \lstinline|HAVING| clause. Streams can be looked at
+through a window - this in turn can be either based on time or length.
+
+The core difference to standard databases is the additional time axis, which
+implies a strict ordering on events and leads to operators such as
+\lstinline|->| (followed by).
+
+Strenghts of Esper are of course the easy and efficient handling of event
+relations, also on the temporal dimension. Disadvantages are having to learn an
+entire new language, and complex debugging.
+
+Important API elements are \lstinline|EPAdministrator| (managing statements, listeners,
+iterators), \lstinline|EPRuntime| (sending events), and the \lstinline|EPServiceProvider|
+(represents an engine instance).
+
+A \emph{context} takes a cloud of events and classifies them into one or more
+sets called context partitions. Contexts can apply to multiple statements, can
+be temporally overlapping, and can make statements easier to read. A context is
+created by the create context statement:
+\lstinline|create context SegmentedByCustomer partition by custId from BankTxn|.
+It can then be used in
+statements by referencing it with \lstinline|context SegmentedByCustomer select ...|. 
 
 \end{document}
