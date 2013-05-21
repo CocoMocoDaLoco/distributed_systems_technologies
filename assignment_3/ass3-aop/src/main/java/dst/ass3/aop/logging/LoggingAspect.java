@@ -13,7 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class LoggingAspect {
 
-    @Pointcut("execution(* dst.ass3.aop.IPluginExecutable.execute(..))")
+    @Pointcut("execution(* dst.ass3.aop.IPluginExecutable.execute(..)) && !@annotation(Invisible)")
     void anyCall() { }
 
     @Before("anyCall()")
