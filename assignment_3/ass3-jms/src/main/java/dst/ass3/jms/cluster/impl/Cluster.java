@@ -47,6 +47,7 @@ public class Cluster implements ICluster {
             clusterQueue = (Queue)ctx.lookup(Names.CLUSTER_QUEUE);
 
             connection = connectionFactory.createConnection();
+            connection.setClientID(name);
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             messageProducer = session.createProducer(qout);
 

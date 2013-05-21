@@ -22,6 +22,8 @@ import dst.ass3.jms.scheduler.IScheduler.ISchedulerListener.InfoType;
 
 public class Scheduler implements IScheduler {
 
+    private static final String NAME = Scheduler.class.getName();
+
     private ISchedulerListener listener;
 
     private Connection connection;
@@ -39,6 +41,7 @@ public class Scheduler implements IScheduler {
             Queue qin = (Queue)ctx.lookup(Names.SCHEDULER_QUEUE);
 
             connection = connectionFactory.createConnection();
+            connection.setClientID(NAME);
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             messageProducer = session.createProducer(qout);
 
