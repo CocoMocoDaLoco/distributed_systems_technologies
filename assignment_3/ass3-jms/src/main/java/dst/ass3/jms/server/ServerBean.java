@@ -114,15 +114,15 @@ public class ServerBean implements MessageListener {
             return;
         }
 
-        final ITask task = getTask(dto.getId());
-
-        /* Persist to DB. */
-
-        task.setStatus(dto.getStatus());
-
-        entityManager.persist(task);
-
         try {
+            final ITask task = getTask(dto.getId());
+
+            /* Persist to DB. */
+
+            task.setStatus(dto.getStatus());
+
+            entityManager.persist(task);
+
             /* Notify scheduler. */
 
             final TaskDTO schedDTO = new TaskDTO(task);
@@ -131,6 +131,8 @@ public class ServerBean implements MessageListener {
             schedulerProducer.send(sm);
         } catch (JMSException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace(); /* getSingleResult() throws a wide variety of exceptions. */
         }
     }
 
@@ -141,17 +143,17 @@ public class ServerBean implements MessageListener {
             return;
         }
 
-        final ITask task = getTask(dto.getId());
-
-        /* Persist to DB. */
-
-        task.setComplexity(dto.getComplexity());
-        task.setStatus(dto.getStatus());
-        task.setRatedBy(dto.getRatedBy());
-
-        entityManager.persist(task);
-
         try {
+            final ITask task = getTask(dto.getId());
+
+            /* Persist to DB. */
+
+            task.setComplexity(dto.getComplexity());
+            task.setStatus(dto.getStatus());
+            task.setRatedBy(dto.getRatedBy());
+
+            entityManager.persist(task);
+
             if (dto.getStatus() == TaskStatus.READY_FOR_PROCESSING) {
                 /* Forward to computers. */
 
@@ -171,6 +173,8 @@ public class ServerBean implements MessageListener {
             }
         } catch (JMSException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace(); /* getSingleResult() throws a wide variety of exceptions. */
         }
     }
 
@@ -192,6 +196,8 @@ public class ServerBean implements MessageListener {
             schedulerProducer.send(sm);
         } catch (JMSException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace(); /* getSingleResult() throws a wide variety of exceptions. */
         }
     }
 
