@@ -21,19 +21,16 @@ public class ManagementAspect {
     private final Timer timer = new Timer();
     private final List<IPluginExecutable> activeExecutions = Collections.synchronizedList(new ArrayList<IPluginExecutable>());
 
-    @Pointcut("execution(* dst.ass3.aop.IPluginExecutable.execute(..)) && @annotation(Timeout)")
-    void timeoutExecution() { }
+    @Pointcut("execution(* dst.ass3.aop.IPluginExecutable.execute(..)) && @annotation(timeout)")
+    void timeoutExecution(Timeout timeout) { }
 
-    @Before("timeoutExecution()")
-    public void beforeTimeoutExecution(JoinPoint thisJoinPoint) {
+    @Before("timeoutExecution(timeout)")
+    public void beforeTimeoutExecution(JoinPoint thisJoinPoint, Timeout timeout) {
         final IPluginExecutable executable = (IPluginExecutable)thisJoinPoint.getTarget();
 
         activeExecutions.add(executable);
 
         try {
-            Method method = thisJoinPoint.getTarget().getClass().getMethod("execute");
-            Timeout timeout = method.getAnnotation(Timeout.class);
-
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -42,15 +39,13 @@ public class ManagementAspect {
                     }
                 }
             }, timeout.value());
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
         } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
 
-    @After("timeoutExecution()")
-    public void afterTimeoutExecution(JoinPoint thisJoinPoint) {
+    @After("timeoutExecution(timeout)")
+    public void afterTimeoutExecution(JoinPoint thisJoinPoint, Timeout timeout) {
         activeExecutions.remove(thisJoinPoint.getTarget());
     }
 
