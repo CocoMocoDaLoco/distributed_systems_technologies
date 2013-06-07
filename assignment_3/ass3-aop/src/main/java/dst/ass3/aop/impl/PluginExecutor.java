@@ -58,6 +58,7 @@ public class PluginExecutor implements IPluginExecutor, INewJarListener {
     @Override
     public void onNewJar(File file) {
         JarFile jarFile = null;
+        URLClassLoader cl = null;
         try {
             System.out.printf("Found new JAR: %s%n", file.getName());
 
@@ -65,7 +66,7 @@ public class PluginExecutor implements IPluginExecutor, INewJarListener {
             final Enumeration<JarEntry> e = jarFile.entries();
 
             final URL[] urls = { new URL(String.format("jar:file:%s!/", file.getCanonicalPath())) };
-            final URLClassLoader cl = URLClassLoader.newInstance(urls);
+            cl = URLClassLoader.newInstance(urls);
 
             while (e.hasMoreElements()) {
                 final JarEntry je = e.nextElement();
@@ -87,11 +88,11 @@ public class PluginExecutor implements IPluginExecutor, INewJarListener {
                     @Override
                     public void run() {
                         instance.execute();
-
-                        /* TODO: After execution, free all resources? */
                     }
                 });
             }
+
+            cl.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -102,6 +103,7 @@ public class PluginExecutor implements IPluginExecutor, INewJarListener {
             e1.printStackTrace();
         } finally {
             try { if (jarFile != null) { jarFile.close(); } } catch (IOException e) { e.printStackTrace(); }
+            try { if (cl != null) { cl.close(); } } catch (IOException e) { e.printStackTrace(); }
         }
     }
 
