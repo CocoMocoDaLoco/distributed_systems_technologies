@@ -85,15 +85,12 @@ public class EventProcessing implements IEventProcessing {
                 Constants.EVENT_TASK_DURATION);
         administrator.createEPL(epl);
 
-        /* TODO: Fix this query for cases such as P N P N P N P N
-         * (https://tuwel.tuwien.ac.at/mod/forum/discuss.php?d=43464). */
-
-        String pattern = String.format("every r1=%1$s(status = %2$s.%3$s) -> " +
-                                       "         %1$s(status = %2$s.%4$s, id = r1.id) -> " +
-                                       "         %1$s(status = %2$s.%3$s, id = r1.id) -> " +
-                                       "         %1$s(status = %2$s.%4$s, id = r1.id) -> " +
-                                       "         %1$s(status = %2$s.%3$s, id = r1.id) -> " +
-                                       "         %1$s(status = %2$s.%4$s, id = r1.id)",
+        String pattern = String.format("every r1=%1$s(status = %2$s.%3$s) @consume(1) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id) @consume(2) -> " +
+                                       "         %1$s(status = %2$s.%3$s, id = r1.id) @consume(3) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id) @consume(4) -> " +
+                                       "         %1$s(status = %2$s.%3$s, id = r1.id) @consume(5) -> " +
+                                       "         %1$s(status = %2$s.%4$s, id = r1.id) @consume(6)",
                 EVENT_TASK,
                 TaskStatus.class.getSimpleName(),
                 TaskStatus.READY_FOR_PROCESSING.toString(),
